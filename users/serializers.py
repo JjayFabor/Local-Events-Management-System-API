@@ -9,16 +9,19 @@ class CustomUserSerializer(serializers.ModelSerializer):
         fields = ["email", "password", "first_name", "last_name"]
         extra_kwargs = {
             "password": {"write_only": True},
+            "first_name": {"required": True},
+            "last_name": {"required": True},
             "is_organizer": {"read_only": True},
             "organizer_request": {"read_only": True},
         }
 
     def create(self, validated_data):
-        password = validated_data.pop("password", None)
-        user = self.Meta.model(**validated_data)
-        if password is not None:
-            user.set_password(password)
-        user.save()
+        user = CustomUser.objects.create_user(
+            email=validated_data["email"],
+            password=validated_data["password"],
+            first_name=validated_data.get("first_name", ""),
+            last_name=validated_data.get("last_name", ""),
+        )
         return user
 
     def validate_name(self, first_name, last_name):
