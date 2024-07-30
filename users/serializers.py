@@ -11,8 +11,6 @@ class CustomUserSerializer(serializers.ModelSerializer):
             "password": {"write_only": True},
             "first_name": {"required": True},
             "last_name": {"required": True},
-            "is_organizer": {"read_only": True},
-            "organizer_request": {"read_only": True},
         }
 
     def create(self, validated_data):

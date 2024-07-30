@@ -7,8 +7,6 @@ from .manager import CustomUserManger
 class CustomUser(AbstractUser):
     username = None
     email = models.EmailField(_("email address"), unique=True)
-    is_organizer = models.BooleanField(default=False)
-    organizer_request = models.BooleanField(default=False)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
