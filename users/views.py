@@ -1,8 +1,6 @@
-from rest_framework import status
+from rest_framework import status, generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import *
-from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.sessions.models import Session
@@ -12,20 +10,33 @@ from .serializers import *
 from .models import CustomUser
 
 
-class UserRegisterView(APIView):
+class UserRegisterView(generics.CreateAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = CustomUserSerializer
     permission_classes = [AllowAny]
 
+    @extend_schema(
+        responses={
+            201: CustomUserSerializer,
+            400: MessageSerializer,
+        },
+        description="Register a new user",
+    )
     def post(self, request, *args, **kwargs):
-        serializer = CustomUserSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return super().post(request, *args, **kwargs)
 
 
 class UserLoginView(APIView):
     permission_classes = [AllowAny]
 
+    @extend_schema(
+        request=CustomUserSerializer,
+        responses={
+            200: TokenSerializer,
+            400: MessageSerializer,
+        },
+        description="Authenticate a user and return a CSRF token",
+    )
     def post(self, request, *args, **kwargs):
         email = request.data.get("email")
         password = request.data.get("password")
@@ -45,9 +56,16 @@ class UserLoginView(APIView):
         )
 
 
-class UserLogoutView(APIView):
+class UserLogoutView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = MessageSerializer
 
+    @extend_schema(
+        responses={
+            200: MessageSerializer,
+        },
+        description="Log out the authenticated user",
+    )
     def post(self, request, *args, **kwargs):
         logout(request)
         Session.objects.filter(session_key=request.session.session_key).delete()
