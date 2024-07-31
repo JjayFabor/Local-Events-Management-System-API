@@ -7,7 +7,9 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.sessions.models import Session
 from django.middleware.csrf import get_token
-from django.http import JsonResponse
+from drf_spectacular.utils import extend_schema
+from .serializers import *
+from .models import CustomUser
 
 
 class UserRegisterView(APIView):
