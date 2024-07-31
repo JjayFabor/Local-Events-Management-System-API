@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "rest_framework",
     "users",
+    "events",
 ]
 
 # Rest Framework
