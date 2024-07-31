@@ -18,6 +18,10 @@ The API allows for managing local events, including user authentication, event c
 
 ## Key Features
 
+### Admin
+
+- Create and manage admin accounts.
+
 ### User Authentication:
 
 - User registration and login.
@@ -27,6 +31,7 @@ The API allows for managing local events, including user authentication, event c
 
 - CRUD operations for events.
 - Fields: Event name, description, date, location, organizer, etc.
+- **Only admin users can create events.**
 
 ### Event Registration:
 
@@ -40,7 +45,7 @@ The API allows for managing local events, including user authentication, event c
 
 ### User Roles and Permissions:
 
-- Differentiate between regular users and event organizers.
+- Differentiate between regular users and event organizers and admin.
 - Organizers can manage their own events.
 
 ### Throttling and Rate Limiting:
