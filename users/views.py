@@ -6,18 +6,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.sessions.models import Session
 from django.middleware.csrf import get_token
 from drf_spectacular.utils import extend_schema
-from .serializers import CustomUserSerializer
-from rest_framework import serializers
+from .serializers import *
 from .models import CustomUser
-
-
-# Response serializers
-class MessageSerializer(serializers.Serializer):
-    message = serializers.CharField()
-
-
-class TokenSerializer(serializers.Serializer):
-    csrf_token = serializers.CharField()
 
 
 class UserRegisterView(generics.CreateAPIView):

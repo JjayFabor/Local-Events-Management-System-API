@@ -150,6 +150,74 @@ paths:
                 type: object
                 additionalProperties: {}
           description: ''
+  /api/users/admin/create/:
+    post:
+      operationId: users_admin_create_create
+      description: Created an Admin Account.
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Admin'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Admin'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Admin'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Admin'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+          description: ''
+  /api/users/admin/initial-create/:
+    post:
+      operationId: users_admin_initial_create_create
+      description: Created an Admin Account.
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Admin'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Admin'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Admin'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Admin'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+          description: ''
   /api/users/login/:
     post:
       operationId: users_login_create
@@ -250,6 +318,29 @@ paths:
           description: ''
 components:
   schemas:
+    Admin:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        password:
+          type: string
+          writeOnly: true
+          maxLength: 128
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+      required:
+      - email
+      - first_name
+      - last_name
+      - password
     CustomUser:
       type: object
       properties:
