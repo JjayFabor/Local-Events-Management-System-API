@@ -6,7 +6,7 @@ Welcome to the Local Events Management System API project! This project is desig
 
 The API allows for managing local events, including user authentication, event creation, registration, and searching/filtering of events.
 
-For detailed documentation on the API, please visit: [**_Local Events Management System API Documentation_**](/API_DOCUMENTATION.md)
+<-- For detailed documentation on the API, please visit: [**_Local Events Management System API Documentation_**](/API_DOCUMENTATION.md) -->
 
 ## **Project Roadmap**
 
