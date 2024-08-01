@@ -8,7 +8,7 @@ urlpatterns = [
     path("admin/create/", CreateAdminView.as_view()),
     path("admin/login/", AdminUserLoginView.as_view()),
     path("admin/logout/", AdminUserLogoutView.as_view()),
-    path("users/register/", UserRegisterView.as_view()),
-    path("users/login/", UserLoginView.as_view()),
-    path("users/logout/", UserLogoutView.as_view()),
+    path("register/", UserRegisterView.as_view()),
+    path("login/", UserLoginView.as_view()),
+    path("logout/", UserLogoutView.as_view()),
 ]
