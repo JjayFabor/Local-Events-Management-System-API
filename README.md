@@ -1,14 +1,14 @@
 # **Local Events Management System API**
 
-## Overview
+## **Overview**
 
 Welcome to the Local Events Management System API project! This project is designed to help me learn and improve your skills in Django and Django Rest Framework (DRF).
 
 The API allows for managing local events, including user authentication, event creation, registration, and searching/filtering of events.
 
-<!-- For detailed documentation on the API, please visit: [Local Events Management System API Documentation](https://jjayfabor.github.io/Local-Events-Management-System-API/) -->
+For detailed documentation on the API, please visit: [**_Local Events Management System API Documentation_**](/API_DOCUMENTATION.md)
 
-## Project Roadmap
+## **Project Roadmap**
 
 ### Week 1: Django and Rest Framework Basics
 
@@ -16,7 +16,7 @@ The API allows for managing local events, including user authentication, event c
 
 ### Week 3: Project Development and Deployment -->
 
-## Key Features
+## **Key Features**
 
 ### Admin
 
@@ -56,7 +56,7 @@ The API allows for managing local events, including user authentication, event c
 
 - Paginate the list of events for easier browsing.
 
-## Learning Objectives
+## **Learning Objectives**
 
 By working on this project, I will:
 
@@ -65,10 +65,10 @@ By working on this project, I will:
 - Learn how to handle user authentication, permissions, and efficient data handling.
 - Get hands-on experience with deploying a Django project.
 
-## Contributing
+## **Contributing**
 
 **_Contributions to this project are not being accepted as it serves as a personal guide to become a proficient Django backend/API developer. Thank you for your understanding._**
 
-## Contact
+## **Contact**
 
 If you have any questions or suggestions, please feel free to contact me at faborjaylordvhan@gmail.com.
