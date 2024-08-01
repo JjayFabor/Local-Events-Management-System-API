@@ -29,8 +29,13 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
+
 AUTH_USER_MODEL = "users.CustomUser"
 
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
 # Application definition
 
 INSTALLED_APPS = [
@@ -44,6 +49,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
+    "corsheaders",
     "users",
     "events",
 ]
@@ -71,6 +77,10 @@ SPECTACULAR_SETTINGS = {
     "TITLE": "Local Events Management System API",
     "DESCRIPTION": "Welcome to the Local Events Management System API!",
     "VERSION": "1.0.0",
+    "SERVERS": [
+        {"url": "http://127.0.0.1:8000", "description": "Local server"},
+        {"url": "http://localhost:8000", "description": "Local server"},
+    ],
     "SERVE_INCLUDE_SCHEMA": False,
     "COMPONENT_SPLIT_REQUEST": True,
     "SCHEMA_PATH_PREFIX": "/api/v[0-9]",
@@ -89,9 +99,11 @@ SPECTACULAR_SETTINGS = {
     },
 }
 
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
