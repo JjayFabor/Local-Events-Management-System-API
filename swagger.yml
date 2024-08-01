@@ -1,0 +1,589 @@
+openapi: 3.0.3
+info:
+  title: Local Events Management System API
+  version: 1.0.0
+  description: Welcome to the Local Events Management System API!
+paths:
+  /api/events/:
+    post:
+      operationId: api_events_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EventRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EventRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - Bearer: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+          description: ''
+  /api/events/category/:
+    post:
+      operationId: api_events_category_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CategoryRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CategoryRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - Bearer: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+          description: ''
+  /api/token/refresh/:
+    post:
+      operationId: api_token_refresh_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefreshRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefreshRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefreshRequest'
+        required: true
+      security:
+      - Bearer: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
+  /api/users/admin/create/:
+    post:
+      operationId: api_users_admin_create_create
+      description: Created an Admin Account.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AdminRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AdminRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - Bearer: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Admin'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+          description: ''
+  /api/users/admin/initial-create/:
+    post:
+      operationId: api_users_admin_initial_create_create
+      description: Created an Admin Account.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AdminRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AdminRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - Bearer: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Admin'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+          description: ''
+  /api/users/admin/login/:
+    post:
+      operationId: api_users_admin_login_create
+      description: Admin User loging and return refresh and access token
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AdminRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AdminRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - Bearer: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+          description: ''
+  /api/users/admin/logout/:
+    post:
+      operationId: api_users_admin_logout_create
+      description: Logout admin user
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MessageRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MessageRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - Bearer: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+          description: ''
+  /api/users/login/:
+    post:
+      operationId: api_users_login_create
+      description: Authenticate a user and return a CSRF token
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomUserRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CustomUserRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CustomUserRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - Bearer: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+          description: ''
+  /api/users/logout/:
+    post:
+      operationId: api_users_logout_create
+      description: Log out the authenticated user
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MessageRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MessageRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - Bearer: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+          description: ''
+  /api/users/register/:
+    post:
+      operationId: api_users_register_create
+      description: Register a new user
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomUserRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CustomUserRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CustomUserRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - Bearer: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomUser'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+          description: ''
+components:
+  schemas:
+    Admin:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+      required:
+      - email
+      - first_name
+      - last_name
+    AdminRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          minLength: 1
+          title: Email address
+          maxLength: 254
+        password:
+          type: string
+          writeOnly: true
+          minLength: 1
+          maxLength: 128
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+      required:
+      - email
+      - first_name
+      - last_name
+      - password
+    Category:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 100
+      required:
+      - name
+    CategoryRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+      required:
+      - name
+    CustomUser:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+      required:
+      - email
+      - first_name
+      - last_name
+    CustomUserRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          minLength: 1
+          title: Email address
+          maxLength: 254
+        password:
+          type: string
+          writeOnly: true
+          minLength: 1
+          maxLength: 128
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+      required:
+      - email
+      - first_name
+      - last_name
+      - password
+    Event:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        event_name:
+          type: string
+          maxLength: 100
+        event_hosts:
+          type: string
+          maxLength: 200
+        description:
+          type: string
+          maxLength: 200
+        image_url:
+          type: string
+          format: uri
+          maxLength: 200
+        event_date:
+          type: string
+          format: date-time
+        location:
+          type: string
+          maxLength: 100
+        registration_deadline:
+          type: string
+          format: date-time
+        capacity:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        category:
+          type: integer
+      required:
+      - capacity
+      - category
+      - created_at
+      - description
+      - event_date
+      - event_hosts
+      - event_name
+      - id
+      - image_url
+      - location
+      - registration_deadline
+      - updated_at
+    EventRequest:
+      type: object
+      properties:
+        event_name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        event_hosts:
+          type: string
+          minLength: 1
+          maxLength: 200
+        description:
+          type: string
+          minLength: 1
+          maxLength: 200
+        image_url:
+          type: string
+          format: uri
+          minLength: 1
+          maxLength: 200
+        event_date:
+          type: string
+          format: date-time
+        location:
+          type: string
+          minLength: 1
+          maxLength: 100
+        registration_deadline:
+          type: string
+          format: date-time
+        capacity:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        category:
+          type: integer
+      required:
+      - capacity
+      - category
+      - description
+      - event_date
+      - event_hosts
+      - event_name
+      - image_url
+      - location
+      - registration_deadline
+    Message:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+      - message
+    MessageRequest:
+      type: object
+      properties:
+        message:
+          type: string
+          minLength: 1
+      required:
+      - message
+    StatusEnum:
+      enum:
+      - UPCOMING
+      - ONGOING
+      - COMPLETED
+      - CANCELED
+      type: string
+      description: |-
+        * `UPCOMING` - UPCOMING
+        * `ONGOING` - ONGOING
+        * `COMPLETED` - COMPLETED
+        * `CANCELED` - CANCELED
+    Token:
+      type: object
+      properties:
+        csrf_token:
+          type: string
+      required:
+      - csrf_token
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+      required:
+      - access
+    TokenRefreshRequest:
+      type: object
+      properties:
+        refresh:
+          type: string
+          writeOnly: true
+          minLength: 1
+      required:
+      - refresh
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+servers:
+- url: http://127.0.0.1:8000
+  description: Local server
+- url: http://localhost:8000
+  description: Local server
