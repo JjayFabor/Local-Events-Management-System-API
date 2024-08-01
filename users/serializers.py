@@ -36,7 +36,6 @@ class AdminSerializer(BaseUserSerializer):
         return self.create_user(validated_data, is_staff=True, is_superuser=True)
 
 
-# Response serializers
 class MessageSerializer(serializers.Serializer):
     message = serializers.CharField()
 
