@@ -35,6 +35,7 @@ AUTH_USER_MODEL = "users.CustomUser"
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "https://JjayFabor.github.io",
 ]
 # Application definition
 
