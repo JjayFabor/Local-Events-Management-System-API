@@ -132,7 +132,7 @@ venv.bak/
 
 
 API_DOCUMENTATION.md
-schema.yml
+swagger.yml
 
 # Spyder project settings
 .spyderproject
