@@ -4,7 +4,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from .models import *
 from .serializers import *
-from drf_spectacular.utils import extend_schema, OpenApiExample
+from users.serializers import CustomUserSerializer
+from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiParameter
 
 
 @extend_schema(
@@ -59,6 +60,7 @@ class CategoryView(generics.ListCreateAPIView):
         OpenApiExample(
             "Create Event Example",
             value={
+                "category_name": "Education",
                 "event_name": "Annual Tech Conference",
                 "event_hosts": "Tech Innovators Inc.",
                 "description": "A conference for technology enthusiasts to explore new trends.",
@@ -104,7 +106,7 @@ class EventView(generics.CreateAPIView):
                     "description": "A conference for technology enthusiasts to explore new trends.",
                     "image_url": "https://example.com/images/tech-conference.jpg",
                     "event_date": "2024-09-15T09:00:00Z",
-                    "category": 1,
+                    "category": "Education",
                     "location": "Tech Convention Center, Silicon Valley",
                     "registration_deadline": "2024-09-01T23:59:59Z",
                     "capacity": 500,
@@ -122,6 +124,57 @@ class ListEventView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
 
+@extend_schema(
+    tags=["Events"],
+    request=None,
+    responses={
+        200: {
+            "description": "Event registration successful.",
+            "content": {
+                "application/json": {
+                    "example": {"message": "Event registration successful."},
+                }
+            },
+        },
+        400: {
+            "description": "Event ID Missing or Bad Request",
+            "content": {
+                "application/json": {
+                    "example": {"error": "Event ID is required"},
+                }
+            },
+        },
+        404: {
+            "description": "Event Not Found",
+            "content": {
+                "application/json": {
+                    "example": {"error": "Event not found"},
+                }
+            },
+        },
+        403: {
+            "description": "Unauthorized",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "error": "Authentication credentials were not provided."
+                    },
+                }
+            },
+        },
+    },
+    parameters=[
+        OpenApiParameter(
+            name="event_id",
+            type=int,
+            description="ID of the event to register for",
+            required=True,
+            location=OpenApiParameter.PATH,
+        )
+    ],
+    summary="Register for an Event",
+    description="This endpoint allows an authenticated user to register for an event by providing the event ID in the URL path.",
+)
 class EventRegistrationView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -135,6 +188,83 @@ class EventRegistrationView(APIView):
             )
 
         user.events_joined.add(event)
+        event.participants.add(user)
         return Response(
             {"message": "Event registration successful."}, status=status.HTTP_200_OK
+        )
+
+
+@extend_schema(
+    tags=["Event"],
+    parameters=[
+        OpenApiParameter(
+            "event_id",
+            description="ID of the event to retrieve details for",
+            required=True,
+            type=int,
+            location=OpenApiParameter.PATH,
+        )
+    ],
+    responses={
+        200: OpenApiExample(
+            "Successful Response",
+            summary="Event and Participants",
+            description="Details of the event and its participants.",
+            value={
+                "event": {
+                    "id": 1,
+                    "name": "Sample Event",
+                    "description": "An example event description.",
+                    "image_url": "https://example.com/images/tech-conference.jpg",
+                    "event_date": "2024-09-15T17:00:00+08:00",
+                    "location": "Sample Location",
+                    "registration_deadline": "2024-09-02T07:59:59+08:00",
+                    "capacity": 500,
+                    "created_at": "2024-08-02T10:00:56.066996+08:00",
+                    "updated_at": "2024-08-02T10:00:56.067011+08:00",
+                    "status": "UPCOMING",
+                    "category": 1,
+                },
+                "participants": [
+                    {
+                        "id": 1,
+                        "email": "user1@example.com",
+                        "first_name": "John",
+                        "last_name": "Doe",
+                    },
+                    {
+                        "id": 2,
+                        "email": "user2@example.com",
+                        "first_name": "Jane",
+                        "last_name": "Doe",
+                    },
+                ],
+            },
+        ),
+        404: OpenApiExample(
+            "Event Not Found",
+            summary="Event Not Found",
+            description="No event found with the provided ID.",
+            value={"error": "Event not found"},
+        ),
+    },
+    description="Retrieve the details of an event and its participants.",
+)
+class EventDetailView(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, event_id, *args, **kwargs):
+        try:
+            event = EventModel.objects.get(id=event_id)
+            event_data = EventSerializer(event).data
+            participants_data = CustomUserSerializer(
+                event.participants.all(), many=True
+            ).data
+        except EventModel.DoesNotExist:
+            return Response(
+                {"error": "Event not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+        return Response(
+            {"event": event_data, "participants": participants_data},
+            status=status.HTTP_200_OK,
         )
