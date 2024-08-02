@@ -6,11 +6,12 @@ from django.utils.translation import gettext_lazy as _
 class BaseUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ["email", "password", "first_name", "last_name"]
+        fields = ["email", "password", "first_name", "last_name", "events_joined"]
         extra_kwargs = {
             "password": {"write_only": True},
             "first_name": {"required": True},
             "last_name": {"required": True},
+            "events_joined": {"read_only": True},
         }
 
     def create_user(self, validated_data, is_staff=False, is_superuser=False):

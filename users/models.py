@@ -7,6 +7,9 @@ from .manager import CustomUserManger
 class CustomUser(AbstractUser):
     username = None
     email = models.EmailField(_("email address"), unique=True)
+    events_joined = models.ManyToManyField(
+        "events.EventModel", related_name="participants", blank=True
+    )
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
