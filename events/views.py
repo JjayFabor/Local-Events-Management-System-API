@@ -195,7 +195,7 @@ class EventRegistrationView(APIView):
 
 
 @extend_schema(
-    tags=["Event"],
+    tags=["Events"],
     parameters=[
         OpenApiParameter(
             "event_id",
@@ -206,47 +206,8 @@ class EventRegistrationView(APIView):
         )
     ],
     responses={
-        200: OpenApiExample(
-            "Successful Response",
-            summary="Event and Participants",
-            description="Details of the event and its participants.",
-            value={
-                "event": {
-                    "id": 1,
-                    "name": "Sample Event",
-                    "description": "An example event description.",
-                    "image_url": "https://example.com/images/tech-conference.jpg",
-                    "event_date": "2024-09-15T17:00:00+08:00",
-                    "location": "Sample Location",
-                    "registration_deadline": "2024-09-02T07:59:59+08:00",
-                    "capacity": 500,
-                    "created_at": "2024-08-02T10:00:56.066996+08:00",
-                    "updated_at": "2024-08-02T10:00:56.067011+08:00",
-                    "status": "UPCOMING",
-                    "category": 1,
-                },
-                "participants": [
-                    {
-                        "id": 1,
-                        "email": "user1@example.com",
-                        "first_name": "John",
-                        "last_name": "Doe",
-                    },
-                    {
-                        "id": 2,
-                        "email": "user2@example.com",
-                        "first_name": "Jane",
-                        "last_name": "Doe",
-                    },
-                ],
-            },
-        ),
-        404: OpenApiExample(
-            "Event Not Found",
-            summary="Event Not Found",
-            description="No event found with the provided ID.",
-            value={"error": "Event not found"},
-        ),
+        200: EventDetailSerializer,
+        404: ErrorSerializer,
     },
     description="Retrieve the details of an event and its participants.",
 )

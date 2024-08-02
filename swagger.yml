@@ -19,6 +19,7 @@ paths:
             examples:
               CreateEventExample:
                 value:
+                  category_name: Education
                   event_name: Annual Tech Conference
                   event_hosts: Tech Innovators Inc.
                   description: A conference for technology enthusiasts to explore
@@ -190,6 +191,37 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: ''
+  /api/events/event-detail/{event_id}/:
+    get:
+      operationId: api_events_event_detail_retrieve
+      description: Retrieve the details of an event and its participants.
+      parameters:
+      - in: path
+        name: event_id
+        schema:
+          type: integer
+        description: ID of the event to retrieve details for
+        required: true
+      tags:
+      - Events
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - Bearer: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventDetail'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
   /api/events/event-list/:
     get:
       operationId: api_events_event_list_list
@@ -221,7 +253,7 @@ paths:
                         new trends.
                       image_url: https://example.com/images/tech-conference.jpg
                       event_date: '2024-09-15T09:00:00Z'
-                      category: 1
+                      category: Education
                       location: Tech Convention Center, Silicon Valley
                       registration_deadline: '2024-09-01T23:59:59Z'
                       capacity: 500
@@ -233,6 +265,67 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+          description: ''
+  /api/events/register-event/{event_id}/:
+    post:
+      operationId: api_events_register_event_create
+      description: This endpoint allows an authenticated user to register for an event
+        by providing the event ID in the URL path.
+      summary: Register for an Event
+      parameters:
+      - in: path
+        name: event_id
+        schema:
+          type: integer
+        description: ID of the event to register for
+        required: true
+      tags:
+      - Events
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - Bearer: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Event registration successful.
+                content:
+                  application/json:
+                    example:
+                      message: Event registration successful.
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Event ID Missing or Bad Request
+                content:
+                  application/json:
+                    example:
+                      error: Event ID is required
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                description: Event Not Found
+                content:
+                  application/json:
+                    example:
+                      error: Event not found
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                description: Unauthorized
+                content:
+                  application/json:
+                    example:
+                      error: Authentication credentials were not provided.
           description: ''
   /api/token/refresh/:
     post:
@@ -592,7 +685,7 @@ components:
         events_joined:
           type: array
           items:
-            type: integer
+            type: string
           readOnly: true
       required:
       - email
@@ -662,7 +755,7 @@ components:
         events_joined:
           type: array
           items:
-            type: integer
+            type: string
           readOnly: true
       required:
       - email
@@ -707,6 +800,9 @@ components:
         id:
           type: integer
           readOnly: true
+        category_name:
+          type: string
+          readOnly: true
         event_name:
           type: string
           maxLength: 100
@@ -748,6 +844,7 @@ components:
       required:
       - capacity
       - category
+      - category_name
       - created_at
       - description
       - event_date
@@ -756,6 +853,64 @@ components:
       - id
       - image_url
       - location
+      - registration_deadline
+      - updated_at
+    EventDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        event_name:
+          type: string
+          maxLength: 100
+        description:
+          type: string
+          maxLength: 200
+        image_url:
+          type: string
+          format: uri
+          maxLength: 200
+        event_date:
+          type: string
+          format: date-time
+        location:
+          type: string
+          maxLength: 100
+        registration_deadline:
+          type: string
+          format: date-time
+        capacity:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        category:
+          type: integer
+        participants:
+          type: array
+          items:
+            $ref: '#/components/schemas/Participant'
+      required:
+      - capacity
+      - category
+      - created_at
+      - description
+      - event_date
+      - event_name
+      - id
+      - image_url
+      - location
+      - participants
       - registration_deadline
       - updated_at
     EventRequest:
@@ -821,6 +976,26 @@ components:
           minLength: 1
       required:
       - message
+    Participant:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+      required:
+      - email
+      - id
     StatusEnum:
       enum:
       - UPCOMING
