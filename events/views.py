@@ -231,10 +231,31 @@ class EventRegistrationView(APIView):
                 {"error": "Event not found"}, status=status.HTTP_404_NOT_FOUND
             )
 
+        # check if the user already registered
+        if event.participants.filter(id=user.id).exists():
+            return Response(
+                {"message": "You are already registered for this event."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Check if the partipants exceed the capacity
+        total_participants = event.participants.count()
+        if total_participants >= event.capacity:
+            return Response(
+                {"message": "Event is full"}, status=status.HTTP_405_METHOD_NOT_ALLOWED
+            )
+
         user.events_joined.add(event)
         event.participants.add(user)
+
+        # Recalculate the total participants after adding the user
+        total_participants = event.participants.count()
         return Response(
-            {"message": "Event registration successful."}, status=status.HTTP_200_OK
+            {
+                "message": "Event registration successful.",
+                "total_participants": total_participants,
+            },
+            status=status.HTTP_200_OK,
         )
 
 
