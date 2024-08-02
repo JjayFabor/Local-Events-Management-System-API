@@ -1,5 +1,5 @@
 from rest_framework import status, generics
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from .models import *
 from .serializers import *
 from drf_spectacular.utils import extend_schema, OpenApiExample
@@ -80,3 +80,41 @@ class EventView(generics.CreateAPIView):
 
     def post(self, request, *args, **kwargs):
         return super().post(request, *args, **kwargs)
+
+
+@extend_schema(
+    tags=["Events"],
+    request=None,
+    responses={
+        200: EventSerializer(many=True),
+        400: ErrorSerializer,
+    },
+    summary="List Available Events",
+    description="This endpoint allows any authenticated user to retrieve a list of available events.",
+    examples=[
+        OpenApiExample(
+            "List of Events",
+            value=[
+                {
+                    "id": 1,
+                    "event_name": "Annual Tech Conference",
+                    "event_hosts": "Tech Innovators Inc.",
+                    "description": "A conference for technology enthusiasts to explore new trends.",
+                    "image_url": "https://example.com/images/tech-conference.jpg",
+                    "event_date": "2024-09-15T09:00:00Z",
+                    "category": 1,
+                    "location": "Tech Convention Center, Silicon Valley",
+                    "registration_deadline": "2024-09-01T23:59:59Z",
+                    "capacity": 500,
+                    "status": "UPCOMING",
+                }
+            ],
+            request_only=False,
+            response_only=True,
+        ),
+    ],
+)
+class ListEventView(generics.ListAPIView):
+    queryset = EventModel.objects.all()
+    serializer_class = EventSerializer
+    permission_classes = [IsAuthenticated]
