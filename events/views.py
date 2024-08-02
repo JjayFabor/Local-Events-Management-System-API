@@ -62,7 +62,7 @@ class CategoryView(generics.ListCreateAPIView):
                 "description": "A conference for technology enthusiasts to explore new trends.",
                 "image_url": "https://example.com/images/tech-conference.jpg",
                 "event_date": "2024-09-15T09:00:00Z",
-                "category": 1,  # Replace with a valid category ID
+                "category": 1,
                 "location": "Tech Convention Center, Silicon Valley",
                 "registration_deadline": "2024-09-01T23:59:59Z",
                 "capacity": 500,
