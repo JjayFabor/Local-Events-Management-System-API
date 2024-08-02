@@ -66,9 +66,8 @@ paths:
   /api/events/category/:
     get:
       operationId: api_events_category_list
-      description: This endpoint is Only for Admin user for creation of a new category
-        or retrieving a list of all categories.
-      summary: Create and List Categories
+      description: Retrieve a list of all categories. Only accessible by Admin users.
+      summary: List Categories
       tags:
       - Categories
       security:
@@ -93,39 +92,20 @@ paths:
                       name: Sports
                   summary: List of Categories
           description: ''
-        '201':
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Category'
-              examples:
-                ListOfCategories:
-                  value:
-                  - - id: 1
-                      name: Education
-                    - id: 2
-                      name: Sports
-                  summary: List of Categories
-          description: ''
-        '400':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: ''
         '403':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-          description: ''
+              examples:
+                Forbidden:
+                  value:
+                    detail: You do not have permission to perform this action.
+          description: User does not have permission
     post:
       operationId: api_events_category_create
-      description: This endpoint is Only for Admin user for creation of a new category
-        or retrieving a list of all categories.
-      summary: Create and List Categories
+      description: Create a new category. Only accessible by Admin users.
+      summary: Create Category
       tags:
       - Categories
       requestBody:
@@ -151,33 +131,11 @@ paths:
       - basicAuth: []
       - Bearer: []
       responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Category'
-              examples:
-                ListOfCategories:
-                  value:
-                  - id: 1
-                    name: Education
-                  - id: 2
-                    name: Sports
-                  summary: List of Categories
-          description: ''
         '201':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Category'
-              examples:
-                ListOfCategories:
-                  value:
-                  - id: 1
-                    name: Education
-                  - id: 2
-                    name: Sports
-                  summary: List of Categories
           description: ''
         '400':
           content:
@@ -190,7 +148,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-          description: ''
+              examples:
+                Forbidden:
+                  value:
+                    detail: You do not have permission to perform this action.
+          description: User does not have permission
   /api/events/event-detail/{event_id}/:
     get:
       operationId: api_events_event_detail_retrieve

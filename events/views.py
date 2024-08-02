@@ -5,34 +5,78 @@ from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from .models import *
 from .serializers import *
 from users.serializers import CustomUserSerializer
-from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiParameter
+from drf_spectacular.utils import (
+    extend_schema,
+    extend_schema_view,
+    OpenApiExample,
+    OpenApiParameter,
+    OpenApiResponse,
+)
 
 
-@extend_schema(
-    tags=["Categories"],
-    request=CategorySerializer,
-    responses={
-        200: CategorySerializer,
-        201: CategorySerializer,
-        400: ErrorSerializer,
-        403: ErrorSerializer,
-    },
-    summary="Create and List Categories",
-    description="This endpoint is Only for Admin user for creation of a new category or retrieving a list of all categories.",
-    examples=[
-        OpenApiExample(
-            "List of Categories",
-            value=[{"id": 1, "name": "Education"}, {"id": 2, "name": "Sports"}],
-            request_only=False,
-            response_only=True,
-        ),
-        OpenApiExample(
-            "Create Category Request",
-            value={"name": "Health"},
-            request_only=True,
-            response_only=False,
-        ),
-    ],
+@extend_schema_view(
+    get=extend_schema(
+        tags=["Categories"],
+        summary="List Categories",
+        description="Retrieve a list of all categories. Only accessible by Admin users.",
+        responses={
+            200: CategorySerializer(many=True),
+            403: OpenApiResponse(
+                response=ErrorSerializer,
+                description="User does not have permission",
+                examples=[
+                    OpenApiExample(
+                        "Forbidden",
+                        value={
+                            "detail": "You do not have permission to perform this action."
+                        },
+                        request_only=False,
+                        response_only=True,
+                    )
+                ],
+            ),
+        },
+        examples=[
+            OpenApiExample(
+                "List of Categories",
+                value=[{"id": 1, "name": "Education"}, {"id": 2, "name": "Sports"}],
+                request_only=False,
+                response_only=True,
+            ),
+        ],
+    ),
+    post=extend_schema(
+        tags=["Categories"],
+        summary="Create Category",
+        description="Create a new category. Only accessible by Admin users.",
+        request=CategorySerializer,
+        responses={
+            201: CategorySerializer,
+            400: ErrorSerializer,
+            403: OpenApiResponse(
+                response=ErrorSerializer,
+                description="User does not have permission",
+                examples=[
+                    OpenApiExample(
+                        "Forbidden",
+                        value={
+                            "detail": "You do not have permission to perform this action."
+                        },
+                        request_only=False,
+                        response_only=True,
+                    )
+                ],
+            ),
+        },
+        examples=[
+            OpenApiExample(
+                "Create Category Request",
+                value={"name": "Health"},
+                request_only=True,
+                response_only=False,
+            ),
+        ],
+    ),
 )
 class CategoryView(generics.ListCreateAPIView):
     queryset = Category.objects.all()

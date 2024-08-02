@@ -51,6 +51,5 @@ class EventDetailSerializer(serializers.ModelSerializer):
             "updated_at",
             "status",
             "category",
-            "category_name",
             "participants",
         ]
