@@ -232,7 +232,8 @@ paths:
     post:
       operationId: api_events_register_event_create
       description: This endpoint allows an authenticated user to register for an event
-        by providing the event ID in the URL path.
+        by providing the event ID in the URL path. It ensures that the user can only
+        register once and checks if the event has reached its capacity.
       summary: Register for an Event
       parameters:
       - in: path
@@ -253,41 +254,45 @@ paths:
           content:
             application/json:
               schema:
-                description: Event registration successful.
-                content:
-                  application/json:
-                    example:
-                      message: Event registration successful.
+                $ref: '#/components/schemas/EventRegistrationResponse'
+              examples:
+                SuccessfulRegistration:
+                  value:
+                    message: Event registration successful.
+                    total_participants: 5
+                  summary: Successful Registration
+                EventIsFull:
+                  value:
+                    message: Event is full
+                  summary: Event is Full
+                AlreadyRegistered:
+                  value:
+                    message: You are already registered for this event.
+                  summary: Already Registered
           description: ''
         '400':
           content:
             application/json:
               schema:
-                description: Event ID Missing or Bad Request
-                content:
-                  application/json:
-                    example:
-                      error: Event ID is required
+                $ref: '#/components/schemas/EventRegistrationResponse'
           description: ''
         '404':
           content:
             application/json:
               schema:
-                description: Event Not Found
-                content:
-                  application/json:
-                    example:
-                      error: Event not found
+                $ref: '#/components/schemas/EventRegistrationResponse'
           description: ''
         '403':
           content:
             application/json:
               schema:
-                description: Unauthorized
-                content:
-                  application/json:
-                    example:
-                      error: Authentication credentials were not provided.
+                $ref: '#/components/schemas/EventRegistrationResponse'
+          description: ''
+        '405':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventRegistrationResponse'
           description: ''
   /api/token/refresh/:
     post:
@@ -875,6 +880,16 @@ components:
       - participants
       - registration_deadline
       - updated_at
+    EventRegistrationResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        total_participants:
+          type: integer
+      required:
+      - message
+      - total_participants
     EventRequest:
       type: object
       properties:
