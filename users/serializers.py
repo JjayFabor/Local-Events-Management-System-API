@@ -4,6 +4,10 @@ from django.utils.translation import gettext_lazy as _
 
 
 class BaseUserSerializer(serializers.ModelSerializer):
+    events_joined = serializers.SlugRelatedField(
+        many=True, read_only=True, slug_field="event_name"
+    )
+
     class Meta:
         model = CustomUser
         fields = ["email", "password", "first_name", "last_name", "events_joined"]
@@ -11,7 +15,6 @@ class BaseUserSerializer(serializers.ModelSerializer):
             "password": {"write_only": True},
             "first_name": {"required": True},
             "last_name": {"required": True},
-            "events_joined": {"read_only": True},
         }
 
     def create_user(self, validated_data, is_staff=False, is_superuser=False):
