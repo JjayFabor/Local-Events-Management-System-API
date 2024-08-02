@@ -2,7 +2,16 @@ openapi: 3.0.3
 info:
   title: Local Events Management System API
   version: 1.0.0
-  description: Welcome to the Local Events Management System API!
+  description: |+
+    Welcome to the Local Events Management System API!
+
+    This API allows for managing local events, including user authentication, event creation, registration, and searching/filtering of events.
+
+    **Default Throttling:**
+
+    * **Unauthenticated**: 60 requests per hour
+    * **Authenticated**: 2000 requests per day
+
 paths:
   /api/events/:
     post:

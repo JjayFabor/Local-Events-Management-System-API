@@ -72,6 +72,14 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticated",
     ],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "60/hour",
+        "user": "2000/day",
+    },
 }
 
 SIMPLE_JWT = {
@@ -83,7 +91,11 @@ SIMPLE_JWT = {
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "Local Events Management System API",
-    "DESCRIPTION": "Welcome to the Local Events Management System API!",
+    "DESCRIPTION": "Welcome to the Local Events Management System API!\n\n"
+    "This API allows for managing local events, including user authentication, event creation, registration, and searching/filtering of events.\n\n"
+    "**Default Throttling:**\n\n"
+    "* **Unauthenticated**: 60 requests per hour\n"
+    "* **Authenticated**: 2000 requests per day\n\n",
     "VERSION": "1.0.0",
     "SERVERS": [
         {"url": "http://127.0.0.1:8000", "description": "Local server"},
