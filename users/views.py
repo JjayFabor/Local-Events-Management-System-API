@@ -23,9 +23,6 @@ class UserRegisterView(generics.CreateAPIView):
     serializer_class = CustomUserSerializer
     permission_classes = [AllowAny]
 
-    def post(self, request, *args, **kwargs):
-        return super().post(request, *args, **kwargs)
-
 
 @extend_schema(
     tags=["User"],
@@ -128,7 +125,9 @@ class UserLogoutView(generics.GenericAPIView):
 
     def post(self, request, *args, **kwargs):
         logout(request)
-        Session.objects.filter(session_key=request.session.session_key).delete()
+        session_key = request.session.session_key
+        if session_key:
+            Session.objects.filter(session_key=request.session.session_key).delete()
         return Response(
             {"message": "Logout Successful"},
             status=status.HTTP_200_OK,
