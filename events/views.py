@@ -1,5 +1,4 @@
 from rest_framework import status, generics
-from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from django.shortcuts import get_object_or_404
@@ -11,7 +10,6 @@ from .serializers import (
     EventDetailSerializer,
     EventRegistrationResponseSerializer,
 )
-from users.serializers import CustomUserSerializer
 from drf_spectacular.utils import (
     extend_schema,
     extend_schema_view,
@@ -19,6 +17,9 @@ from drf_spectacular.utils import (
     OpenApiParameter,
     OpenApiResponse,
 )
+from .filters import EventFilter
+from rest_framework.filters import SearchFilter, OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 @extend_schema_view(
@@ -164,9 +165,30 @@ class EventView(generics.CreateAPIView):
     ],
 )
 class ListEventView(generics.ListAPIView):
-    queryset = EventModel.objects.all()
     serializer_class = EventSerializer
     permission_classes = [IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_class = EventFilter
+    search_fields = ["event_name", "location", "event_date", "category__name"]
+    ordering_fields = ["event_name", "event_date", "location", "category__name"]
+
+    def get_queryset(self):
+        queryset = EventModel.objects.all()
+        return self.filter_queryset(queryset)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+
+        if not queryset.exists():
+            return Response({"detail": "Not Found"}, status=status.HTTP_404_NOT_FOUND)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 @extend_schema(
