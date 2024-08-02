@@ -2,8 +2,15 @@ from rest_framework import status, generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
-from .models import *
-from .serializers import *
+from django.shortcuts import get_object_or_404
+from .models import Category, EventModel
+from .serializers import (
+    CategorySerializer,
+    EventSerializer,
+    ErrorSerializer,
+    EventDetailSerializer,
+    EventRegistrationResponseSerializer,
+)
 from users.serializers import CustomUserSerializer
 from drf_spectacular.utils import (
     extend_schema,
@@ -82,12 +89,6 @@ class CategoryView(generics.ListCreateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = [IsAdminUser]
-
-    def post(self, request, *args, **kwargs):
-        return super().post(request, *args, **kwargs)
-
-    def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
 
 
 @extend_schema(
@@ -172,40 +173,11 @@ class ListEventView(generics.ListAPIView):
     tags=["Events"],
     request=None,
     responses={
-        200: {
-            "description": "Event registration successful.",
-            "content": {
-                "application/json": {
-                    "example": {"message": "Event registration successful."},
-                }
-            },
-        },
-        400: {
-            "description": "Event ID Missing or Bad Request",
-            "content": {
-                "application/json": {
-                    "example": {"error": "Event ID is required"},
-                }
-            },
-        },
-        404: {
-            "description": "Event Not Found",
-            "content": {
-                "application/json": {
-                    "example": {"error": "Event not found"},
-                }
-            },
-        },
-        403: {
-            "description": "Unauthorized",
-            "content": {
-                "application/json": {
-                    "example": {
-                        "error": "Authentication credentials were not provided."
-                    },
-                }
-            },
-        },
+        200: EventRegistrationResponseSerializer,
+        400: EventRegistrationResponseSerializer,
+        404: EventRegistrationResponseSerializer,
+        403: EventRegistrationResponseSerializer,
+        405: EventRegistrationResponseSerializer,
     },
     parameters=[
         OpenApiParameter(
@@ -217,19 +189,15 @@ class ListEventView(generics.ListAPIView):
         )
     ],
     summary="Register for an Event",
-    description="This endpoint allows an authenticated user to register for an event by providing the event ID in the URL path.",
+    description="This endpoint allows an authenticated user to register for an event by providing the event ID in the URL path. It ensures that the user can only register once and checks if the event has reached its capacity.",
 )
-class EventRegistrationView(APIView):
+class EventRegistrationView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = EventRegistrationResponseSerializer
 
     def post(self, request, event_id, *args, **kwargs):
+        event = get_object_or_404(EventModel, id=event_id)
         user = request.user
-        try:
-            event = EventModel.objects.get(id=event_id)
-        except EventModel.DoesNotExist:
-            return Response(
-                {"error": "Event not found"}, status=status.HTTP_404_NOT_FOUND
-            )
 
         # check if the user already registered
         if event.participants.filter(id=user.id).exists():
@@ -238,7 +206,7 @@ class EventRegistrationView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Check if the partipants exceed the capacity
+        # Check if the participants exceed the capacity
         total_participants = event.participants.count()
         if total_participants >= event.capacity:
             return Response(
@@ -277,20 +245,9 @@ class EventRegistrationView(APIView):
     description="Retrieve the details of an event and its participants.",
 )
 class EventDetailView(generics.RetrieveAPIView):
+    queryset = EventModel.objects.all()
+    serializer_class = EventDetailSerializer
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, event_id, *args, **kwargs):
-        try:
-            event = EventModel.objects.get(id=event_id)
-            event_data = EventSerializer(event).data
-            participants_data = CustomUserSerializer(
-                event.participants.all(), many=True
-            ).data
-        except EventModel.DoesNotExist:
-            return Response(
-                {"error": "Event not found"}, status=status.HTTP_404_NOT_FOUND
-            )
-        return Response(
-            {"event": event_data, "participants": participants_data},
-            status=status.HTTP_200_OK,
-        )
+    def get_object(self):
+        return get_object_or_404(EventModel, id=self.kwargs["event_id"])

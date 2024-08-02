@@ -1,8 +1,12 @@
 from rest_framework import serializers
-from .models import *
+from .models import Category, EventModel
 from django.utils.translation import gettext_lazy as _
 from users.models import CustomUser
-from drf_spectacular.utils import extend_schema_field
+from drf_spectacular.utils import (
+    extend_schema_field,
+    OpenApiExample,
+    extend_schema_serializer,
+)
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -53,3 +57,24 @@ class EventDetailSerializer(serializers.ModelSerializer):
             "category",
             "participants",
         ]
+
+
+@extend_schema_serializer(
+    examples=[
+        OpenApiExample(
+            "Successful Registration",
+            value={
+                "message": "Event registration successful.",
+                "total_participants": 5,
+            },
+        ),
+        OpenApiExample("Event is Full", value={"message": "Event is full"}),
+        OpenApiExample(
+            "Already Registered",
+            value={"message": "You are already registered for this event."},
+        ),
+    ]
+)
+class EventRegistrationResponseSerializer(serializers.Serializer):
+    message = serializers.CharField()
+    total_participants = serializers.IntegerField()
