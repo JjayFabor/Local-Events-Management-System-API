@@ -57,6 +57,15 @@ class UserLoginView(APIView):
             status=status.HTTP_400_BAD_REQUEST,
         )
 
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            user = request.user
+            serializer = CustomUserSerializer(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(
+            {"error": "User is not authenticated"}, status=status.HTTP_400_BAD_REQUEST
+        )
+
 
 @extend_schema(
     tags=["User"],
