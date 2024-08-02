@@ -7,13 +7,30 @@ paths:
   /api/events/:
     post:
       operationId: api_events_create
+      description: This endpoint allows an admin user only to create a new event.
+      summary: Create a new event
       tags:
-      - api
+      - Events
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/EventRequest'
+            examples:
+              CreateEventExample:
+                value:
+                  event_name: Annual Tech Conference
+                  event_hosts: Tech Innovators Inc.
+                  description: A conference for technology enthusiasts to explore
+                    new trends.
+                  image_url: https://example.com/images/tech-conference.jpg
+                  event_date: '2024-09-15T09:00:00Z'
+                  category: 1
+                  location: Tech Convention Center, Silicon Valley
+                  registration_deadline: '2024-09-01T23:59:59Z'
+                  capacity: 500
+                  status: UPCOMING
+                summary: Create Event Example
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/EventRequest'
@@ -31,16 +48,91 @@ paths:
               schema:
                 $ref: '#/components/schemas/Event'
           description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
   /api/events/category/:
+    get:
+      operationId: api_events_category_list
+      description: This endpoint is Only for Admin user for creation of a new category
+        or retrieving a list of all categories.
+      summary: Create and List Categories
+      tags:
+      - Categories
+      security:
+      - jwtAuth: []
+      - Bearer: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+              examples:
+                ListOfCategories:
+                  value:
+                  - - id: 1
+                      name: Education
+                    - id: 2
+                      name: Sports
+                  summary: List of Categories
+          description: ''
+        '201':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+              examples:
+                ListOfCategories:
+                  value:
+                  - - id: 1
+                      name: Education
+                    - id: 2
+                      name: Sports
+                  summary: List of Categories
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
     post:
       operationId: api_events_category_create
+      description: This endpoint is Only for Admin user for creation of a new category
+        or retrieving a list of all categories.
+      summary: Create and List Categories
       tags:
-      - api
+      - Categories
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/CategoryRequest'
+            examples:
+              CreateCategoryRequest:
+                value:
+                  name: Health
+                summary: Create Category Request
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/CategoryRequest'
@@ -52,11 +144,45 @@ paths:
       - jwtAuth: []
       - Bearer: []
       responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+              examples:
+                ListOfCategories:
+                  value:
+                  - id: 1
+                    name: Education
+                  - id: 2
+                    name: Sports
+                  summary: List of Categories
+          description: ''
         '201':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Category'
+              examples:
+                ListOfCategories:
+                  value:
+                  - id: 1
+                    name: Education
+                  - id: 2
+                    name: Sports
+                  summary: List of Categories
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
           description: ''
   /api/token/refresh/:
     post:
@@ -92,7 +218,7 @@ paths:
       operationId: api_users_admin_create_create
       description: Created an Admin Account.
       tags:
-      - api
+      - Admin User
       requestBody:
         content:
           application/json:
@@ -126,7 +252,7 @@ paths:
       operationId: api_users_admin_initial_create_create
       description: Created an Admin Account.
       tags:
-      - api
+      - Admin User
       requestBody:
         content:
           application/json:
@@ -160,7 +286,7 @@ paths:
       operationId: api_users_admin_login_create
       description: Admin User loging and return refresh and access token
       tags:
-      - api
+      - Admin User
       requestBody:
         content:
           application/json:
@@ -195,7 +321,7 @@ paths:
       operationId: api_users_admin_logout_create
       description: Logout admin user
       tags:
-      - api
+      - Admin User
       requestBody:
         content:
           application/json:
@@ -223,7 +349,7 @@ paths:
       operationId: api_users_login_create
       description: Authenticate a user and return a CSRF token
       tags:
-      - api
+      - User
       requestBody:
         content:
           application/json:
@@ -258,7 +384,7 @@ paths:
       operationId: api_users_logout_create
       description: Log out the authenticated user
       tags:
-      - api
+      - User
       requestBody:
         content:
           application/json:
@@ -286,7 +412,7 @@ paths:
       operationId: api_users_register_create
       description: Register a new user
       tags:
-      - api
+      - User
       requestBody:
         content:
           application/json:
@@ -364,10 +490,14 @@ components:
     Category:
       type: object
       properties:
+        id:
+          type: integer
+          readOnly: true
         name:
           type: string
           maxLength: 100
       required:
+      - id
       - name
     CategoryRequest:
       type: object
@@ -421,6 +551,13 @@ components:
       - first_name
       - last_name
       - password
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+      - error
     Event:
       type: object
       properties:

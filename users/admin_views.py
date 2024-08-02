@@ -10,17 +10,18 @@ from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 
 
+@extend_schema(
+    tags=["Admin User"],
+    responses={
+        201: AdminSerializer,
+        400: MessageSerializer,
+    },
+    description="Created an Admin Account.",
+)
 class BaseAdminCreateView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = AdminSerializer
 
-    @extend_schema(
-        responses={
-            201: AdminSerializer,
-            400: MessageSerializer,
-        },
-        description="Created an Admin Account.",
-    )
     def post(self, request, *args, **kwargs):
         return super().post(request, *args, **kwargs)
 
@@ -33,17 +34,18 @@ class CreateAdminView(BaseAdminCreateView):
     permission_classes = [IsAuthenticated, IsAdminUser]
 
 
+@extend_schema(
+    tags=["Admin User"],
+    request=AdminSerializer,
+    responses={
+        200: TokenSerializer,
+        400: MessageSerializer,
+    },
+    description="Admin User loging and return refresh and access token",
+)
 class AdminUserLoginView(APIView):
     permission_classes = [AllowAny]
 
-    @extend_schema(
-        request=AdminSerializer,
-        responses={
-            200: TokenSerializer,
-            400: MessageSerializer,
-        },
-        description="Admin User loging and return refresh and access token",
-    )
     def post(self, request, *args, **kwargs):
         email = request.data.get("email")
         password = request.data.get("password")
@@ -63,16 +65,17 @@ class AdminUserLoginView(APIView):
             )
 
 
+@extend_schema(
+    tags=["Admin User"],
+    responses={
+        200: MessageSerializer,
+    },
+    description="Logout admin user",
+)
 class AdminUserLogoutView(generics.GenericAPIView):
     permission_classes = [IsAdminUser, IsAuthenticated]
     serializer_class = MessageSerializer
 
-    @extend_schema(
-        responses={
-            200: MessageSerializer,
-        },
-        description="Logout admin user",
-    )
     def post(self, request, *args, **kwargs):
         try:
             refresh_token = request.data.get("refresh_token")
