@@ -1,4 +1,6 @@
 from rest_framework import status, generics
+from rest_framework.views import APIView
+from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from .models import *
 from .serializers import *
@@ -118,3 +120,21 @@ class ListEventView(generics.ListAPIView):
     queryset = EventModel.objects.all()
     serializer_class = EventSerializer
     permission_classes = [IsAuthenticated]
+
+
+class EventRegistrationView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, event_id, *args, **kwargs):
+        user = request.user
+        try:
+            event = EventModel.objects.get(id=event_id)
+        except EventModel.DoesNotExist:
+            return Response(
+                {"error": "Event not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        user.events_joined.add(event)
+        return Response(
+            {"message": "Event registration successful."}, status=status.HTTP_200_OK
+        )
