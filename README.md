@@ -30,7 +30,7 @@ The API allows for managing local events, including user authentication, event c
 ### Event Management:
 
 - CRUD operations for events.
-- Fields: Event name, description, date, location, organizer, etc.
+- Fields: Event name, description, date, location, etc.
 - **Only admin users can create events.**
 
 ### Event Registration:
@@ -41,12 +41,12 @@ The API allows for managing local events, including user authentication, event c
 ### Searching and Filtering:
 
 - Search events by name, location, and date.
-- Filter events by category, organizer, etc.
+- Filter events by category, date, etc.
 
-### User Roles and Permissions:
+<!-- ### User Roles and Permissions:
 
 - Differentiate between regular users and event organizers and admin.
-- Organizers can manage their own events.
+- Organizers can manage their own events. -->
 
 ### Throttling and Rate Limiting:
 
