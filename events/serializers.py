@@ -10,9 +10,14 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class EventSerializer(serializers.ModelSerializer):
+    category_name = serializers.SerializerMethodField()
+
     class Meta:
         model = EventModel
         fields = "__all__"
+
+    def get_category(self, obj):
+        return obj.category.name
 
 
 class ErrorSerializer(serializers.Serializer):
