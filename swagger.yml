@@ -187,9 +187,39 @@ paths:
   /api/events/event-list/:
     get:
       operationId: api_events_event_list_list
-      description: This endpoint allows any authenticated user to retrieve a list
-        of available events.
+      description: This endpoint allows any authenticated user to retrieve all list
+        of available events or search for events.
       summary: List Available Events
+      parameters:
+      - in: query
+        name: category
+        schema:
+          type: string
+      - in: query
+        name: date
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: location
+        schema:
+          type: string
+      - in: query
+        name: name
+        schema:
+          type: string
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
       tags:
       - Events
       security:

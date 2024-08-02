@@ -140,7 +140,7 @@ class EventView(generics.CreateAPIView):
         400: ErrorSerializer,
     },
     summary="List Available Events",
-    description="This endpoint allows any authenticated user to retrieve a list of available events.",
+    description="This endpoint allows any authenticated user to retrieve all list of available events or search for events.",
     examples=[
         OpenApiExample(
             "List of Events",
@@ -161,6 +161,27 @@ class EventView(generics.CreateAPIView):
             ],
             request_only=False,
             response_only=True,
+        ),
+        OpenApiExample(
+            "Search Events based on Category or Event Name",
+            summary="Example request for searching events by name",
+            value="GET /api/events/?search=Technology",
+            request_only=True,
+            response_only=False,
+        ),
+        OpenApiExample(
+            "Filter Events based on Location",
+            summary="Example request for filtering events by location",
+            value="GET /api/events/?location=Silicon Valley",
+            request_only=True,
+            response_only=False,
+        ),
+        OpenApiExample(
+            "Order Events",
+            summary="Example request for ordering events by date",
+            value="GET /api/events/?ordering=event_date",
+            request_only=True,
+            response_only=False,
         ),
     ],
 )
