@@ -40,6 +40,8 @@ paths:
         required: true
       security:
       - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
       - Bearer: []
       responses:
         '201':
@@ -70,6 +72,8 @@ paths:
       - Categories
       security:
       - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
       - Bearer: []
       responses:
         '200':
@@ -142,6 +146,8 @@ paths:
         required: true
       security:
       - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
       - Bearer: []
       responses:
         '200':
@@ -179,6 +185,50 @@ paths:
                 $ref: '#/components/schemas/Error'
           description: ''
         '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+  /api/events/event-list/:
+    get:
+      operationId: api_events_event_list_list
+      description: This endpoint allows any authenticated user to retrieve a list
+        of available events.
+      summary: List Available Events
+      tags:
+      - Events
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - Bearer: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Event'
+              examples:
+                ListOfEvents:
+                  value:
+                  - - id: 1
+                      event_name: Annual Tech Conference
+                      event_hosts: Tech Innovators Inc.
+                      description: A conference for technology enthusiasts to explore
+                        new trends.
+                      image_url: https://example.com/images/tech-conference.jpg
+                      event_date: '2024-09-15T09:00:00Z'
+                      category: 1
+                      location: Tech Convention Center, Silicon Valley
+                      registration_deadline: '2024-09-01T23:59:59Z'
+                      capacity: 500
+                      status: UPCOMING
+                  summary: List of Events
+          description: ''
+        '400':
           content:
             application/json:
               schema:
@@ -233,6 +283,8 @@ paths:
         required: true
       security:
       - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
       - Bearer: []
       responses:
         '201':
@@ -267,6 +319,8 @@ paths:
         required: true
       security:
       - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
       - Bearer: []
       responses:
         '201':
@@ -301,6 +355,8 @@ paths:
         required: true
       security:
       - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
       - Bearer: []
       - {}
       responses:
@@ -336,6 +392,8 @@ paths:
         required: true
       security:
       - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
       - Bearer: []
       responses:
         '200':
@@ -345,6 +403,59 @@ paths:
                 $ref: '#/components/schemas/Message'
           description: ''
   /api/users/login/:
+    get:
+      operationId: api_users_login_retrieve
+      description: Get the authenticated user's details
+      tags:
+      - User
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - Bearer: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomUser'
+              examples:
+                SuccessfulLogin:
+                  value:
+                    message: Login successful
+                    csrf_token: csrf-token-value
+                  summary: A successful login example
+                  description: Example of a successful login response
+                AuthenticatedUser:
+                  value:
+                    email: user@example.com
+                    first_name: John
+                    last_name: Doe
+                    events_joined:
+                    - list of events the user has join
+                  summary: Example of a successful response with authenticated user
+                    data
+                  description: Returns the details of the authenticated user
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+              examples:
+                InvalidCredentials:
+                  value:
+                    error: Invalid Credentials
+                  summary: An unsuccessful login example
+                  description: Example of an unsuccessful login response due to invalid
+                    credentials
+                UnauthenticatedUser:
+                  value:
+                    error: User is not authenticated
+                  summary: Example of an unauthenticated response
+                  description: Returns an error message when the user is not authenticated
+          description: ''
     post:
       operationId: api_users_login_create
       description: Authenticate a user and return a CSRF token
@@ -364,6 +475,8 @@ paths:
         required: true
       security:
       - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
       - Bearer: []
       - {}
       responses:
@@ -372,12 +485,26 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Token'
+              examples:
+                SuccessfulLogin:
+                  value:
+                    message: Login successful
+                    csrf_token: csrf-token-value
+                  summary: A successful login example
+                  description: Example of a successful login response
           description: ''
         '400':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Message'
+              examples:
+                InvalidCredentials:
+                  value:
+                    error: Invalid Credentials
+                  summary: An unsuccessful login example
+                  description: Example of an unsuccessful login response due to invalid
+                    credentials
           description: ''
   /api/users/logout/:
     post:
@@ -399,6 +526,8 @@ paths:
         required: true
       security:
       - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
       - Bearer: []
       responses:
         '200':
@@ -427,6 +556,8 @@ paths:
         required: true
       security:
       - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
       - Bearer: []
       - {}
       responses:
@@ -458,8 +589,14 @@ components:
         last_name:
           type: string
           maxLength: 150
+        events_joined:
+          type: array
+          items:
+            type: integer
+          readOnly: true
       required:
       - email
+      - events_joined
       - first_name
       - last_name
     AdminRequest:
@@ -522,8 +659,14 @@ components:
         last_name:
           type: string
           maxLength: 150
+        events_joined:
+          type: array
+          items:
+            type: integer
+          readOnly: true
       required:
       - email
+      - events_joined
       - first_name
       - last_name
     CustomUserRequest:
@@ -715,6 +858,13 @@ components:
       required:
       - refresh
   securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
     jwtAuth:
       type: http
       scheme: bearer
