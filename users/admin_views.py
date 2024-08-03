@@ -5,13 +5,15 @@ from .models import CustomUser
 from .serializers import *
 from .permissions import AllowIfNoAdminUserExists
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, OpenApiRequest
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
+from .openapi_examples import admin_user_example, admin2_user_example
 
 
 @extend_schema(
     tags=["Admin User"],
+    request=OpenApiRequest(AdminSerializer, examples=[admin_user_example]),
     responses={
         201: AdminSerializer,
         400: MessageSerializer,
@@ -27,6 +29,15 @@ class InitialAdminCreateView(BaseAdminCreateView):
     permission_classes = [AllowIfNoAdminUserExists]
 
 
+@extend_schema(
+    tags=["Admin User"],
+    request=OpenApiRequest(AdminSerializer, examples=[admin2_user_example]),
+    responses={
+        201: AdminSerializer,
+        400: MessageSerializer,
+    },
+    description="Created an Admin Account.",
+)
 class CreateAdminView(BaseAdminCreateView):
     permission_classes = [IsAuthenticated, IsAdminUser]
 

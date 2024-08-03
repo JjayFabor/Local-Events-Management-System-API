@@ -5,13 +5,15 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.sessions.models import Session
 from django.middleware.csrf import get_token
-from drf_spectacular.utils import extend_schema, OpenApiExample
+from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiRequest
 from .serializers import *
 from .models import CustomUser
+from .openapi_examples import regular_user_example
 
 
 @extend_schema(
     tags=["User"],
+    request=OpenApiRequest(CustomUserSerializer, examples=[regular_user_example]),
     responses={
         201: CustomUserSerializer,
         400: MessageSerializer,
