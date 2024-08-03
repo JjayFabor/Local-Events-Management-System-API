@@ -373,12 +373,39 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/AdminRequest'
+            examples:
+              AdminUser:
+                value:
+                  email: test_admin2@example.com
+                  password: admin2password
+                  first_name: Admin2
+                  last_name: User
+                summary: Example of an admin user registration
+                description: Example payload for registering an admin user
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/AdminRequest'
+            examples:
+              AdminUser:
+                value:
+                  email: test_admin2@example.com
+                  password: admin2password
+                  first_name: Admin2
+                  last_name: User
+                summary: Example of an admin user registration
+                description: Example payload for registering an admin user
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/AdminRequest'
+            examples:
+              AdminUser:
+                value:
+                  email: test_admin2@example.com
+                  password: admin2password
+                  first_name: Admin2
+                  last_name: User
+                summary: Example of an admin user registration
+                description: Example payload for registering an admin user
         required: true
       security:
       - jwtAuth: []
@@ -409,12 +436,39 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/AdminRequest'
+            examples:
+              AdminUser:
+                value:
+                  email: test_admin@example.com
+                  password: adminpassword
+                  first_name: Admin
+                  last_name: User
+                summary: Example of an admin user registration
+                description: Example payload for registering an admin user
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/AdminRequest'
+            examples:
+              AdminUser:
+                value:
+                  email: test_admin@example.com
+                  password: adminpassword
+                  first_name: Admin
+                  last_name: User
+                summary: Example of an admin user registration
+                description: Example payload for registering an admin user
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/AdminRequest'
+            examples:
+              AdminUser:
+                value:
+                  email: test_admin@example.com
+                  password: adminpassword
+                  first_name: Admin
+                  last_name: User
+                summary: Example of an admin user registration
+                description: Example payload for registering an admin user
         required: true
       security:
       - jwtAuth: []
@@ -646,12 +700,39 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/CustomUserRequest'
+            examples:
+              RegularUser:
+                value:
+                  email: test_user@example.com
+                  password: userpassword
+                  first_name: Test
+                  last_name: User
+                summary: Example of a regular user registration
+                description: Example payload for registering a regular user
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/CustomUserRequest'
+            examples:
+              RegularUser:
+                value:
+                  email: test_user@example.com
+                  password: userpassword
+                  first_name: Test
+                  last_name: User
+                summary: Example of a regular user registration
+                description: Example payload for registering a regular user
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/CustomUserRequest'
+            examples:
+              RegularUser:
+                value:
+                  email: test_user@example.com
+                  password: userpassword
+                  first_name: Test
+                  last_name: User
+                summary: Example of a regular user registration
+                description: Example payload for registering a regular user
         required: true
       security:
       - jwtAuth: []
