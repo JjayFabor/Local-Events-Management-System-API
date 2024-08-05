@@ -4,7 +4,9 @@ from .views import *
 
 urlpatterns = [
     path("", EventView.as_view(), name="add-event"),
-    path("category/", CategoryView.as_view(), name="add-category"),
+    path("categories/", CategoryListView.as_view(), name="list-categories"),
+    path("categories/create/", CategoryCreateView.as_view(), name="create-categories"),
+    path("categories/<int:pk>/", CategoryDeleteView.as_view(), name="delete-category"),
     path("event-list/", ListEventView.as_view(), name="list-event"),
     path(
         "register-event/<int:event_id>/",

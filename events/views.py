@@ -17,6 +17,13 @@ from drf_spectacular.utils import (
     OpenApiParameter,
     OpenApiResponse,
 )
+from .openapi_examples import (
+    list_categories_example,
+    create_category_request_example,
+    delete_category_success_example,
+    delete_category_error_example,
+    forbidden_example,
+)
 from .filters import EventFilter
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
@@ -28,36 +35,30 @@ from users.permission import IsGovernmentAuthority
         tags=["Categories"],
         summary="List Categories",
         description="Retrieve a list of all categories. Only accessible by Admin users.",
+        operation_id="list_categories",  # Ensure uniqueness
         responses={
             200: CategorySerializer(many=True),
             403: OpenApiResponse(
                 response=ErrorSerializer,
                 description="User does not have permission",
-                examples=[
-                    OpenApiExample(
-                        "Forbidden",
-                        value={
-                            "detail": "You do not have permission to perform this action."
-                        },
-                        request_only=False,
-                        response_only=True,
-                    )
-                ],
+                examples=[forbidden_example],
             ),
         },
-        examples=[
-            OpenApiExample(
-                "List of Categories",
-                value=[{"id": 1, "name": "Education"}, {"id": 2, "name": "Sports"}],
-                request_only=False,
-                response_only=True,
-            ),
-        ],
-    ),
+        examples=[list_categories_example],
+    )
+)
+class CategoryListView(generics.ListAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = [IsGovernmentAuthority]
+
+
+@extend_schema_view(
     post=extend_schema(
         tags=["Categories"],
         summary="Create Category",
         description="Create a new category. Only accessible by Admin users.",
+        operation_id="create_category",  # Ensure uniqueness
         request=CategorySerializer,
         responses={
             201: CategorySerializer,
@@ -65,32 +66,60 @@ from users.permission import IsGovernmentAuthority
             403: OpenApiResponse(
                 response=ErrorSerializer,
                 description="User does not have permission",
-                examples=[
-                    OpenApiExample(
-                        "Forbidden",
-                        value={
-                            "detail": "You do not have permission to perform this action."
-                        },
-                        request_only=False,
-                        response_only=True,
-                    )
-                ],
+                examples=[forbidden_example],
             ),
         },
-        examples=[
-            OpenApiExample(
-                "Create Category Request",
-                value={"name": "Health"},
-                request_only=True,
-                response_only=False,
-            ),
-        ],
-    ),
+        examples=[create_category_request_example],
+    )
 )
-class CategoryView(generics.ListCreateAPIView):
+class CategoryCreateView(generics.CreateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = [IsAuthenticated, IsGovernmentAuthority]
+    permission_classes = [IsGovernmentAuthority]
+
+
+@extend_schema_view(
+    delete=extend_schema(
+        tags=["Categories"],
+        summary="Delete Category",
+        description="Delete an existing category by its ID. Only accessible by Admin users.",
+        operation_id="delete_category_by_id",  # Updated for uniqueness
+        responses={
+            204: OpenApiResponse(
+                description="Category deleted successfully",
+                examples=[delete_category_success_example],
+            ),
+            404: OpenApiResponse(
+                response=ErrorSerializer,
+                description="Category not found",
+                examples=[delete_category_error_example],
+            ),
+            403: OpenApiResponse(
+                response=ErrorSerializer,
+                description="User does not have permission",
+                examples=[forbidden_example],
+            ),
+        },
+    )
+)
+class CategoryDeleteView(generics.DestroyAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = [IsGovernmentAuthority]
+
+    def delete(self, request, *args, **kwargs):
+        category_id = kwargs.get("pk")
+        try:
+            category = self.get_queryset().get(id=category_id)
+            category.delete()
+            return Response(
+                {"message": "Category deleted successfully."},
+                status=status.HTTP_204_NO_CONTENT,
+            )
+        except Category.DoesNotExist:
+            return Response(
+                {"error": "Category not found"}, status=status.HTTP_404_NOT_FOUND
+            )
 
 
 @extend_schema(
