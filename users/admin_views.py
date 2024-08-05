@@ -8,7 +8,7 @@ from drf_spectacular.utils import extend_schema, OpenApiRequest
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from .openapi_examples import admin_user_example, admin2_user_example
-from .permissions import isGovernmentAuthority
+from .permission import IsGovernmentAuthority
 
 
 @extend_schema(
@@ -38,7 +38,7 @@ class BaseAdminCreateView(generics.CreateAPIView):
     description="Created an Admin Account.",
 )
 class CreateAdminView(BaseAdminCreateView):
-    permission_classes = [IsAuthenticated, isGovernmentAuthority]
+    permission_classes = [IsAuthenticated, IsGovernmentAuthority]
 
 
 @extend_schema(
@@ -80,7 +80,7 @@ class AdminUserLoginView(APIView):
     description="Logout admin user",
 )
 class AdminUserLogoutView(generics.GenericAPIView):
-    permission_classes = [isGovernmentAuthority, IsAuthenticated]
+    permission_classes = [IsGovernmentAuthority, IsAuthenticated]
     serializer_class = MessageSerializer
 
     def post(self, request, *args, **kwargs):

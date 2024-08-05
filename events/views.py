@@ -20,7 +20,7 @@ from drf_spectacular.utils import (
 from .filters import EventFilter
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
-from users.permissions import isGovernmentAuthority
+from users.permission import isGovernmentAuthority
 
 
 @extend_schema_view(
