@@ -87,10 +87,37 @@ from users.permission import IsGovernmentAuthority
         ],
     ),
 )
-class CategoryView(generics.ListCreateAPIView):
+class CategoryView(generics.CreateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = [IsAuthenticated, IsGovernmentAuthority]
+    permission_classes = [IsGovernmentAuthority]
+
+    def get(self, request, *args, **kwargs):
+        categories = self.get_queryset()
+        serializer = self.get_serializer(categories, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                {"message": "Added new category"}, status=status.HTTP_201_CREATED
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, *args, **kwargs):
+        category_id = kwargs.get("pk")
+        try:
+            category = self.get_queryset().get(id=category_id)
+            category.delete()
+            return Response(
+                {"message": "Category deleted successfully."}, status=status.HTTP_200_OK
+            )
+        except Category.DoesNotExist:
+            return Response(
+                {"error": "Category not found"}, status=status.HTTP_404_NOT_FOUND
+            )
 
 
 @extend_schema(
