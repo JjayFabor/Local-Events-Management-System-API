@@ -3,12 +3,12 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import CustomUser
 from .serializers import *
-from .permissions import AllowIfNoAdminUserExists
-from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from drf_spectacular.utils import extend_schema, OpenApiRequest
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from .openapi_examples import admin_user_example, admin2_user_example
+from .permission import IsGovernmentAuthority
 
 
 @extend_schema(
@@ -24,9 +24,8 @@ class BaseAdminCreateView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = AdminSerializer
 
-
-class InitialAdminCreateView(BaseAdminCreateView):
-    permission_classes = [AllowIfNoAdminUserExists]
+    def perform_create(self, serializer):
+        serializer.save(is_government_authority=True)
 
 
 @extend_schema(
@@ -39,7 +38,7 @@ class InitialAdminCreateView(BaseAdminCreateView):
     description="Created an Admin Account.",
 )
 class CreateAdminView(BaseAdminCreateView):
-    permission_classes = [IsAuthenticated, IsAdminUser]
+    permission_classes = [IsAuthenticated, IsGovernmentAuthority]
 
 
 @extend_schema(
@@ -81,7 +80,7 @@ class AdminUserLoginView(APIView):
     description="Logout admin user",
 )
 class AdminUserLogoutView(generics.GenericAPIView):
-    permission_classes = [IsAdminUser, IsAuthenticated]
+    permission_classes = [IsGovernmentAuthority, IsAuthenticated]
     serializer_class = MessageSerializer
 
     def post(self, request, *args, **kwargs):

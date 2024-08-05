@@ -10,6 +10,8 @@ class CustomUser(AbstractUser):
     events_joined = models.ManyToManyField(
         "events.EventModel", related_name="participants", blank=True
     )
+    is_government_authority = models.BooleanField(default=False)
+    # is_verified = models.BooleanField(default=False)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
@@ -18,3 +20,7 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.email
+
+    @property
+    def is_resident(self):
+        return not self.is_government_authority and not self.is_superuser
