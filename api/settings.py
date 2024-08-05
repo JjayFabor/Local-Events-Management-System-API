@@ -25,21 +25,23 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-of+#ofs6o!9$3tzq+*ch77e!x(w^qv9&mqe4hw!d)v+#pr-g1+"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ["*"]
-
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+]
 
 AUTH_USER_MODEL = "users.CustomUser"
 
 CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-    "https://jjayfabor.github.io",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_ALL_ORIGINS = True
 
 # Application definition
 
@@ -99,7 +101,6 @@ SPECTACULAR_SETTINGS = {
     "VERSION": "1.0.0",
     "SERVERS": [
         {"url": "http://127.0.0.1:8000", "description": "Local server"},
-        {"url": "http://localhost:8000", "description": "Local server"},
     ],
     "SERVE_INCLUDE_SCHEMA": False,
     "COMPONENT_SPLIT_REQUEST": True,
@@ -123,6 +124,7 @@ SPECTACULAR_SETTINGS = {
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -161,8 +163,8 @@ DATABASES = {
         "NAME": config("DB_NAME"),
         "USER": config("DB_USER"),
         "PASSWORD": config("DB_PWD"),
-        "HOST": "localhost",
-        "PORT": "",
+        "HOST": config("DB_HOST"),
+        "PORT": config("DB_PORT"),
     }
 }
 
@@ -190,6 +192,9 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 
+# Celery Configurations
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
@@ -208,10 +213,13 @@ USE_TZ = True
 STATIC_URL = "static/"
 MEDIA_URL = "media/"
 
-STATIC_ROOT = BASE_DIR / "assets"
 MEDIA_ROOT = BASE_DIR / "media"
 
-STATICFILES_DIRS = [BASE_DIR / "static"]
+# Directory where static files will be collected (optional if not using collectstatic)
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# Whitenoise settings
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
