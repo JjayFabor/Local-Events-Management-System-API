@@ -128,3 +128,37 @@ unauthenticated_user_example = OpenApiExample(
     response_only=True,
     status_codes=["400"],
 )
+
+
+retrieve_user_profile_examples = [
+    OpenApiExample(
+        "Successful Response",
+        value={
+            "id": 1,
+            "first_name": "John",
+            "last_name": "Doe",
+            "email": "johndoe@example.com",
+        },
+        response_only=True,
+        status_codes=["200"],
+    ),
+]
+
+update_user_profile_examples = [
+    OpenApiExample(
+        "Update Request",
+        value={"first_name": "John", "last_name": "Doe"},
+        request_only=True,
+    ),
+    OpenApiExample(
+        "Successful Response",
+        value={
+            "id": 1,
+            "first_name": "John",
+            "last_name": "Doe",
+            "email": "johndoe@example.com",
+        },
+        response_only=True,
+        status_codes=["200"],
+    ),
+]
