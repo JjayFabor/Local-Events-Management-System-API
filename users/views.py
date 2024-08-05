@@ -5,18 +5,41 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.sessions.models import Session
 from django.middleware.csrf import get_token
-from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiRequest
+from django.urls import reverse
+from django.shortcuts import render
+from django.db import transaction
+from drf_spectacular.utils import (
+    extend_schema,
+    OpenApiExample,
+    OpenApiRequest,
+    OpenApiResponse,
+)
 from .serializers import *
 from .models import CustomUser
-from .openapi_examples import regular_user_example
+from .openapi_examples import (
+    regular_user_example,
+    user_response_example,
+    error_response_example,
+    success_confirm_example,
+    error_confirm_example,
+    login_successful_example,
+    login_invalid_credentials_example,
+    authenticated_user_example,
+    unauthenticated_user_example,
+)
+from api.utils import send_confirmation_email
 
 
 @extend_schema(
     tags=["User"],
     request=OpenApiRequest(CustomUserSerializer, examples=[regular_user_example]),
     responses={
-        201: CustomUserSerializer,
-        400: MessageSerializer,
+        201: OpenApiResponse(
+            response=CustomUserSerializer, examples=[user_response_example]
+        ),
+        400: OpenApiResponse(
+            response=MessageSerializer, examples=[error_response_example]
+        ),
     },
     description="Register a new user",
 )
@@ -24,6 +47,75 @@ class UserRegisterView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
     permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            try:
+                with transaction.atomic():
+                    user = serializer.save()
+                    user.is_active = False
+                    user.save()
+
+                    # generate confirmation URL
+                    confirmation_url = request.build_absolute_uri(
+                        reverse("confirm-email", args=[user.id])
+                    )
+
+                    # send confirmation email
+                    send_confirmation_email(user, confirmation_url)
+
+                    headers = self.get_success_headers(serializer.data)
+                    response_data = {
+                        "message": "Check your email for account confirmation",
+                        "user": serializer.data,
+                        "user_id": user.id,
+                    }
+                    return Response(
+                        response_data, status=status.HTTP_201_CREATED, headers=headers
+                    )
+            except Exception as e:
+                return Response(
+                    {"error": str(e)},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                )
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# Handle email confirmation
+@extend_schema(
+    tags=["User"],
+    responses={
+        200: OpenApiResponse(
+            description="Email confirmed, you can now log in.",
+            examples=[success_confirm_example],
+        ),
+        404: OpenApiResponse(
+            description="Invalid Confirmation Link.", examples=[error_confirm_example]
+        ),
+    },
+    description="Handle email confirmation process",
+)
+class ConfirmEmailView(APIView):
+    def get(self, request, user_id):
+        try:
+            user = CustomUser.objects.get(pk=user_id)
+            user.is_active = True
+            user.save()
+            return render(
+                request,
+                "emails/confirmed_email.html",
+                {"message": "Email confirmed, you can now log in."},
+                status=status.HTTP_200_OK,
+            )
+        except CustomUser.DoesNotExist:
+            return render(
+                request,
+                "emails/confirmed_email.html",
+                {"message": "Invalid Confirmation Link."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
 
 @extend_schema(
@@ -35,22 +127,8 @@ class UserRegisterView(generics.CreateAPIView):
     },
     description="Authenticate a user and return a CSRF token",
     examples=[
-        OpenApiExample(
-            "Successful Login",
-            summary="A successful login example",
-            description="Example of a successful login response",
-            value={"message": "Login successful", "csrf_token": "csrf-token-value"},
-            response_only=True,
-            status_codes=["200"],
-        ),
-        OpenApiExample(
-            "Invalid Credentials",
-            summary="An unsuccessful login example",
-            description="Example of an unsuccessful login response due to invalid credentials",
-            value={"error": "Invalid Credentials"},
-            response_only=True,
-            status_codes=["400"],
-        ),
+        login_successful_example,
+        login_invalid_credentials_example,
     ],
 )
 class UserLoginView(APIView):
@@ -81,27 +159,8 @@ class UserLoginView(APIView):
         },
         description="Get the authenticated user's details",
         examples=[
-            OpenApiExample(
-                "Authenticated User",
-                summary="Example of a successful response with authenticated user data",
-                description="Returns the details of the authenticated user",
-                value={
-                    "email": "user@example.com",
-                    "first_name": "John",
-                    "last_name": "Doe",
-                    "events_joined": ["list of events the user has join"],
-                },
-                response_only=True,
-                status_codes=["200"],
-            ),
-            OpenApiExample(
-                "Unauthenticated User",
-                summary="Example of an unauthenticated response",
-                description="Returns an error message when the user is not authenticated",
-                value={"error": "User is not authenticated"},
-                response_only=True,
-                status_codes=["400"],
-            ),
+            authenticated_user_example,
+            unauthenticated_user_example,
         ],
     )
     def get(self, request, *args, **kwargs):

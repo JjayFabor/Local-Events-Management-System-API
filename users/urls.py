@@ -1,14 +1,21 @@
-from django.urls import path, include
+from django.urls import path
 from .views import *
 from .admin_views import *
 
 
 urlpatterns = [
-    path("admin/initial-create/", InitialAdminCreateView.as_view()),
-    path("admin/create/", CreateAdminView.as_view()),
-    path("admin/login/", AdminUserLoginView.as_view()),
-    path("admin/logout/", AdminUserLogoutView.as_view()),
-    path("register/", UserRegisterView.as_view()),
-    path("login/", UserLoginView.as_view()),
-    path("logout/", UserLogoutView.as_view()),
+    path(
+        "admin/initial-create/",
+        InitialAdminCreateView.as_view(),
+        name="admin-initial-create",
+    ),
+    path("admin/create/", CreateAdminView.as_view(), name="admin-create"),
+    path("admin/login/", AdminUserLoginView.as_view(), name="admin-login"),
+    path("admin/logout/", AdminUserLogoutView.as_view(), name="admin-logout"),
+    path("register/", UserRegisterView.as_view(), name="register"),
+    path(
+        "confirm-email/<int:user_id>/", ConfirmEmailView.as_view(), name="confirm-email"
+    ),
+    path("login/", UserLoginView.as_view(), name="login"),
+    path("logout/", UserLogoutView.as_view(), name="logout"),
 ]

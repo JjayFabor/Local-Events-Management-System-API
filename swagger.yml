@@ -555,6 +555,28 @@ paths:
               schema:
                 $ref: '#/components/schemas/Message'
           description: ''
+  /api/users/confirm-email/{user_id}/:
+    get:
+      operationId: api_users_confirm_email_retrieve
+      description: Handle email confirmation process
+      parameters:
+      - in: path
+        name: user_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - User
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - Bearer: []
+      responses:
+        '200':
+          description: Email confirmed, you can now log in.
+        '404':
+          description: Invalid Confirmation Link.
   /api/users/login/:
     get:
       operationId: api_users_login_retrieve
@@ -586,7 +608,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     events_joined:
-                    - list of events the user has join
+                    - list of events the user has joined
                   summary: Example of a successful response with authenticated user
                     data
                   description: Returns the details of the authenticated user
@@ -746,12 +768,34 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CustomUser'
+              examples:
+                UserResponseExample:
+                  value:
+                    message: Check your email for account confirmation
+                    user:
+                      id: 1
+                      email: newuser@example.com
+                      username: newuser
+                      is_active: false
+                  summary: Example of a successful user registration response
+                  description: This example shows the response after a successful
+                    user registration
           description: ''
         '400':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Message'
+              examples:
+                ErrorResponseExample:
+                  value:
+                    email:
+                    - This field is required.
+                    password:
+                    - This field is required.
+                  summary: Example of a failed registration response
+                  description: This example shows the response after a failed registration
+                    due to validation errors
           description: ''
 components:
   schemas:
