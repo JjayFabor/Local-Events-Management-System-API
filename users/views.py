@@ -25,6 +25,8 @@ from .openapi_examples import (
     login_invalid_credentials_example,
     authenticated_user_example,
     unauthenticated_user_example,
+    retrieve_user_profile_examples,
+    update_user_profile_examples,
 )
 from api.utils import send_confirmation_email
 
@@ -151,26 +153,6 @@ class UserLoginView(APIView):
             status=status.HTTP_400_BAD_REQUEST,
         )
 
-    @extend_schema(
-        responses={
-            200: CustomUserSerializer,
-            400: MessageSerializer,
-        },
-        description="Get the authenticated user's details",
-        examples=[
-            authenticated_user_example,
-            unauthenticated_user_example,
-        ],
-    )
-    def get(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            user = request.user
-            serializer = CustomUserSerializer(user)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(
-            {"error": "User is not authenticated"}, status=status.HTTP_400_BAD_REQUEST
-        )
-
 
 @extend_schema(
     tags=["User"],
@@ -202,13 +184,30 @@ class UserProfileView(generics.UpdateAPIView):
     def get_object(self):
         return self.request.user
 
+    @extend_schema(
+        tags=["User"],
+        operation_id="retrieve_user_profile",
+        summary="Retrieve User Profile",
+        description="Retrieve the profile details of the authenticated user.",
+        responses={200: UserProfileSerializer},
+        examples=retrieve_user_profile_examples,
+    )
     def get(self, request, *args, **kwargs):
         user = request.user
         serializer = self.get_serializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def update(self, request, *args, **kwargs):
-        user = self.get_object()
+    @extend_schema(
+        tags=["User"],
+        operation_id="update_user_profile",
+        summary="Update User Profile",
+        description="Update the profile details of the authenticated user. The email field is excluded from being updated.",
+        request=UserProfileSerializer,
+        responses={200: UserProfileSerializer},
+        examples=update_user_profile_examples,
+    )
+    def patch(self, request, *args, **kwargs):
+        user = self.request.user
 
         data = request.data.copy()
         data.pop("email", None)
