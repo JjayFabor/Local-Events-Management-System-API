@@ -10,14 +10,22 @@ class BaseUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ["email", "password", "first_name", "last_name", "events_joined"]
+        fields = [
+            "email",
+            "password",
+            "first_name",
+            "last_name",
+            "events_joined",
+            "is_government_authority",
+        ]
         extra_kwargs = {
             "password": {"write_only": True},
             "first_name": {"required": True},
             "last_name": {"required": True},
+            "is_government_authority": {"read_only": True},
         }
 
-    def _create_user(self, validated_data, is_staff=False, is_superuser=False):
+    def _create_user(self, validated_data, is_government_authority=False):
         user = CustomUser.objects.create_user(
             email=validated_data["email"],
             password=validated_data["password"],
@@ -25,8 +33,7 @@ class BaseUserSerializer(serializers.ModelSerializer):
             last_name=validated_data["last_name"],
         )
         user.set_password(validated_data["password"])
-        user.is_staff = is_staff
-        user.is_superuser = is_superuser
+        user.is_government_authority = is_government_authority
         user.save()
         return user
 
@@ -42,9 +49,9 @@ class CustomUserSerializer(BaseUserSerializer):
 class AdminSerializer(BaseUserSerializer):
     def create(self, validated_data):
         """
-        Create an admin user with staff and superuser status
+        Create an admin user with government authority status
         """
-        return self._create_user(validated_data, is_staff=True, is_superuser=True)
+        return self._create_user(validated_data, is_government_authority=True)
 
 
 class UserProfileSerializer(serializers.ModelSerializer):

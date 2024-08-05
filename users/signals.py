@@ -4,23 +4,17 @@ from django.dispatch import receiver
 from django.contrib.auth.models import Group, Permission
 from events.models import EventModel, Category
 from .models import CustomUser
+from django.contrib.auth import get_user_model
+
+User = get_user_model
 
 
 @receiver(post_save, sender=CustomUser)
 def add_user_to_group(sender, instance, created, **kwargs):
     if created:
-        if instance.is_government_authority:
-            government_group, created = Group.objects.get_or_create(
-                name="Government Authority"
-            )
-            instance.groups.add(government_group)
-        else:
-            resident_group, created = Group.objects.get_or_create(name="Residents")
-            instance.groups.add(resident_group)
-
-        # Ensure no other permissions are assigned
-        if not instance.is_government_authority:
-            instance.user_permissions.clear()
+        resident_group, created = Group.objects.get_or_create(name="Residents")
+        instance.groups.add(resident_group)
+        # print(f"Added {instance.email} to Residents group.")
 
 
 @receiver(post_migrate)
