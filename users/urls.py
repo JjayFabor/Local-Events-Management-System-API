@@ -12,5 +12,6 @@ urlpatterns = [
         "confirm-email/<int:user_id>/", ConfirmEmailView.as_view(), name="confirm-email"
     ),
     path("login/", UserLoginView.as_view(), name="login"),
+    path("user-profile/", UserProfileView.as_view(), name="user-profile"),
     path("logout/", UserLogoutView.as_view(), name="logout"),
 ]
