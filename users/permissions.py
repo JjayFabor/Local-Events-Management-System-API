@@ -1,10 +1,9 @@
 from rest_framework.permissions import BasePermission
-from rest_framework.exceptions import PermissionDenied
-from .models import CustomUser
 
 
-class AllowIfNoAdminUserExists(BasePermission):
+class isGovernmentAuthority(BasePermission):
     def has_permission(self, request, view):
-        if CustomUser.objects.filter(is_superuser=True).exists():
-            raise PermissionDenied(detail="An admin user already exists.")
-        return True
+        return (
+            request.user
+            and request.user.groups.filter(name="Government Authority").exists()
+        )
