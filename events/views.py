@@ -20,6 +20,7 @@ from drf_spectacular.utils import (
 from .filters import EventFilter
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
+from users.permissions import isGovernmentAuthority
 
 
 @extend_schema_view(
@@ -89,7 +90,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 class CategoryView(generics.ListCreateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAuthenticated, isGovernmentAuthority]
 
 
 @extend_schema(
@@ -126,7 +127,7 @@ class CategoryView(generics.ListCreateAPIView):
 class EventView(generics.CreateAPIView):
     queryset = EventModel.objects.all()
     serializer_class = EventSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [isGovernmentAuthority]
 
     def post(self, request, *args, **kwargs):
         return super().post(request, *args, **kwargs)

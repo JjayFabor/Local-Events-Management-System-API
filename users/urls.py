@@ -4,11 +4,6 @@ from .admin_views import *
 
 
 urlpatterns = [
-    path(
-        "admin/initial-create/",
-        InitialAdminCreateView.as_view(),
-        name="admin-initial-create",
-    ),
     path("admin/create/", CreateAdminView.as_view(), name="admin-create"),
     path("admin/login/", AdminUserLoginView.as_view(), name="admin-login"),
     path("admin/logout/", AdminUserLogoutView.as_view(), name="admin-logout"),
