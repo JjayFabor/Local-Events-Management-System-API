@@ -19,110 +19,153 @@ paths:
       description: This endpoint allows an admin user only to create a new event.
       summary: Create a new event
       tags:
-        - Events
+      - Events
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/EventRequest"
+              $ref: '#/components/schemas/EventRequest'
             examples:
               CreateEventExample:
                 value:
                   category_name: Education
                   event_name: Annual Tech Conference
                   event_hosts: Tech Innovators Inc.
-                  description:
-                    A conference for technology enthusiasts to explore
+                  description: A conference for technology enthusiasts to explore
                     new trends.
                   image_url: https://example.com/images/tech-conference.jpg
-                  event_date: "2024-09-15T09:00:00Z"
+                  event_date: '2024-09-15T09:00:00Z'
                   category: 1
                   location: Tech Convention Center, Silicon Valley
-                  registration_deadline: "2024-09-01T23:59:59Z"
+                  registration_deadline: '2024-09-01T23:59:59Z'
                   capacity: 500
                   status: UPCOMING
                 summary: Create Event Example
           application/x-www-form-urlencoded:
             schema:
-              $ref: "#/components/schemas/EventRequest"
+              $ref: '#/components/schemas/EventRequest'
           multipart/form-data:
             schema:
-              $ref: "#/components/schemas/EventRequest"
+              $ref: '#/components/schemas/EventRequest'
         required: true
       security:
-        - jwtAuth: []
-        - cookieAuth: []
-        - basicAuth: []
-        - Bearer: []
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - Bearer: []
       responses:
-        "201":
+        '201':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Event"
-          description: ""
-        "400":
+                $ref: '#/components/schemas/Event'
+          description: ''
+        '400':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
-          description: ""
-        "403":
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '403':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
-          description: ""
-  /api/events/category/:
+                $ref: '#/components/schemas/Error'
+          description: ''
+  /api/events/categories/:
     get:
-      operationId: api_events_category_list
+      operationId: list_categories
       description: Retrieve a list of all categories. Only accessible by Admin users.
       summary: List Categories
       tags:
-        - Categories
+      - Categories
       security:
-        - jwtAuth: []
-        - cookieAuth: []
-        - basicAuth: []
-        - Bearer: []
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - Bearer: []
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Category"
+                  $ref: '#/components/schemas/Category'
               examples:
                 ListOfCategories:
                   value:
-                    - - id: 1
-                        name: Education
-                      - id: 2
-                        name: Sports
+                  - - id: 1
+                      name: Education
+                    - id: 2
+                      name: Sports
                   summary: List of Categories
-          description: ""
-        "403":
+          description: ''
+        '403':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
               examples:
                 Forbidden:
                   value:
                     detail: You do not have permission to perform this action.
           description: User does not have permission
+  /api/events/categories/{id}/:
+    delete:
+      operationId: delete_category_by_id
+      description: Delete an existing category by its ID. Only accessible by Admin
+        users.
+      summary: Delete Category
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Categories
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - Bearer: []
+      responses:
+        '204':
+          description: Category deleted successfully
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                DeleteCategoryError:
+                  value:
+                    error: Category not found
+                  summary: Delete Category Error
+          description: Category not found
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Forbidden:
+                  value:
+                    detail: You do not have permission to perform this action.
+          description: User does not have permission
+  /api/events/categories/create/:
     post:
-      operationId: api_events_category_create
+      operationId: create_category
       description: Create a new category. Only accessible by Admin users.
       summary: Create Category
       tags:
-        - Categories
+      - Categories
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CategoryRequest"
+              $ref: '#/components/schemas/CategoryRequest'
             examples:
               CreateCategoryRequest:
                 value:
@@ -130,34 +173,34 @@ paths:
                 summary: Create Category Request
           application/x-www-form-urlencoded:
             schema:
-              $ref: "#/components/schemas/CategoryRequest"
+              $ref: '#/components/schemas/CategoryRequest'
           multipart/form-data:
             schema:
-              $ref: "#/components/schemas/CategoryRequest"
+              $ref: '#/components/schemas/CategoryRequest'
         required: true
       security:
-        - jwtAuth: []
-        - cookieAuth: []
-        - basicAuth: []
-        - Bearer: []
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - Bearer: []
       responses:
-        "201":
+        '201':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Category"
-          description: ""
-        "400":
+                $ref: '#/components/schemas/Category'
+          description: ''
+        '400':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
-          description: ""
-        "403":
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '403':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
               examples:
                 Forbidden:
                   value:
@@ -168,136 +211,133 @@ paths:
       operationId: api_events_event_detail_retrieve
       description: Retrieve the details of an event and its participants.
       parameters:
-        - in: path
-          name: event_id
-          schema:
-            type: integer
-          description: ID of the event to retrieve details for
-          required: true
+      - in: path
+        name: event_id
+        schema:
+          type: integer
+        description: ID of the event to retrieve details for
+        required: true
       tags:
-        - Events
+      - Events
       security:
-        - jwtAuth: []
-        - cookieAuth: []
-        - basicAuth: []
-        - Bearer: []
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - Bearer: []
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/EventDetail"
-          description: ""
-        "404":
+                $ref: '#/components/schemas/EventDetail'
+          description: ''
+        '404':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
-          description: ""
+                $ref: '#/components/schemas/Error'
+          description: ''
   /api/events/event-list/:
     get:
       operationId: api_events_event_list_list
-      description:
-        This endpoint allows any authenticated user to retrieve all list
+      description: This endpoint allows any authenticated user to retrieve all list
         of available events or search for events.
       summary: List Available Events
       parameters:
-        - in: query
-          name: category
-          schema:
-            type: string
-        - in: query
-          name: date
-          schema:
-            type: string
-            format: date
-        - in: query
-          name: location
-          schema:
-            type: string
-        - in: query
-          name: name
-          schema:
-            type: string
-        - name: ordering
-          required: false
-          in: query
-          description: Which field to use when ordering the results.
-          schema:
-            type: string
-        - name: search
-          required: false
-          in: query
-          description: A search term.
-          schema:
-            type: string
+      - in: query
+        name: category
+        schema:
+          type: string
+      - in: query
+        name: date
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: location
+        schema:
+          type: string
+      - in: query
+        name: name
+        schema:
+          type: string
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
       tags:
-        - Events
+      - Events
       security:
-        - jwtAuth: []
-        - cookieAuth: []
-        - basicAuth: []
-        - Bearer: []
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - Bearer: []
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Event"
+                  $ref: '#/components/schemas/Event'
               examples:
                 ListOfEvents:
                   value:
-                    - - id: 1
-                        event_name: Annual Tech Conference
-                        event_hosts: Tech Innovators Inc.
-                        description:
-                          A conference for technology enthusiasts to explore
-                          new trends.
-                        image_url: https://example.com/images/tech-conference.jpg
-                        event_date: "2024-09-15T09:00:00Z"
-                        category: Education
-                        location: Tech Convention Center, Silicon Valley
-                        registration_deadline: "2024-09-01T23:59:59Z"
-                        capacity: 500
-                        status: UPCOMING
+                  - - id: 1
+                      event_name: Annual Tech Conference
+                      event_hosts: Tech Innovators Inc.
+                      description: A conference for technology enthusiasts to explore
+                        new trends.
+                      image_url: https://example.com/images/tech-conference.jpg
+                      event_date: '2024-09-15T09:00:00Z'
+                      category: Education
+                      location: Tech Convention Center, Silicon Valley
+                      registration_deadline: '2024-09-01T23:59:59Z'
+                      capacity: 500
+                      status: UPCOMING
                   summary: List of Events
-          description: ""
-        "400":
+          description: ''
+        '400':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
-          description: ""
+                $ref: '#/components/schemas/Error'
+          description: ''
   /api/events/register-event/{event_id}/:
     post:
       operationId: api_events_register_event_create
-      description:
-        This endpoint allows an authenticated user to register for an event
+      description: This endpoint allows an authenticated user to register for an event
         by providing the event ID in the URL path. It ensures that the user can only
         register once and checks if the event has reached its capacity.
       summary: Register for an Event
       parameters:
-        - in: path
-          name: event_id
-          schema:
-            type: integer
-          description: ID of the event to register for
-          required: true
+      - in: path
+        name: event_id
+        schema:
+          type: integer
+        description: ID of the event to register for
+        required: true
       tags:
-        - Events
+      - Events
       security:
-        - jwtAuth: []
-        - cookieAuth: []
-        - basicAuth: []
-        - Bearer: []
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - Bearer: []
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/EventRegistrationResponse"
+                $ref: '#/components/schemas/EventRegistrationResponse'
               examples:
                 SuccessfulRegistration:
                   value:
@@ -312,31 +352,31 @@ paths:
                   value:
                     message: You are already registered for this event.
                   summary: Already Registered
-          description: ""
-        "400":
+          description: ''
+        '400':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/EventRegistrationResponse"
-          description: ""
-        "404":
+                $ref: '#/components/schemas/EventRegistrationResponse'
+          description: ''
+        '404':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/EventRegistrationResponse"
-          description: ""
-        "403":
+                $ref: '#/components/schemas/EventRegistrationResponse'
+          description: ''
+        '403':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/EventRegistrationResponse"
-          description: ""
-        "405":
+                $ref: '#/components/schemas/EventRegistrationResponse'
+          description: ''
+        '405':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/EventRegistrationResponse"
-          description: ""
+                $ref: '#/components/schemas/EventRegistrationResponse'
+          description: ''
   /api/token/refresh/:
     post:
       operationId: api_token_refresh_create
@@ -344,210 +384,210 @@ paths:
         Takes a refresh type JSON web token and returns an access type JSON web
         token if the refresh token is valid.
       tags:
-        - api
+      - api
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/TokenRefreshRequest"
+              $ref: '#/components/schemas/TokenRefreshRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: "#/components/schemas/TokenRefreshRequest"
+              $ref: '#/components/schemas/TokenRefreshRequest'
           multipart/form-data:
             schema:
-              $ref: "#/components/schemas/TokenRefreshRequest"
+              $ref: '#/components/schemas/TokenRefreshRequest'
         required: true
       security:
-        - Bearer: []
+      - Bearer: []
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/TokenRefresh"
-          description: ""
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
   /api/users/admin/create/:
     post:
       operationId: api_users_admin_create_create
       description: Created an Admin Account.
       tags:
-        - Admin User
+      - Admin User
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/AdminRequest"
+              $ref: '#/components/schemas/AdminRequest'
             examples:
               AdminUser:
                 value:
-                  email: test_admin2@example.com
-                  password: admin2password
-                  first_name: Admin2
+                  email: test_admin@example.com
+                  password: adminpassword
+                  first_name: Admin
                   last_name: User
                 summary: Example of an admin user registration
                 description: Example payload for registering an admin user
           application/x-www-form-urlencoded:
             schema:
-              $ref: "#/components/schemas/AdminRequest"
+              $ref: '#/components/schemas/AdminRequest'
             examples:
               AdminUser:
                 value:
-                  email: test_admin2@example.com
-                  password: admin2password
-                  first_name: Admin2
+                  email: test_admin@example.com
+                  password: adminpassword
+                  first_name: Admin
                   last_name: User
                 summary: Example of an admin user registration
                 description: Example payload for registering an admin user
           multipart/form-data:
             schema:
-              $ref: "#/components/schemas/AdminRequest"
+              $ref: '#/components/schemas/AdminRequest'
             examples:
               AdminUser:
                 value:
-                  email: test_admin2@example.com
-                  password: admin2password
-                  first_name: Admin2
+                  email: test_admin@example.com
+                  password: adminpassword
+                  first_name: Admin
                   last_name: User
                 summary: Example of an admin user registration
                 description: Example payload for registering an admin user
         required: true
       security:
-        - jwtAuth: []
-        - cookieAuth: []
-        - basicAuth: []
-        - Bearer: []
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - Bearer: []
       responses:
-        "201":
+        '201':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Admin"
-          description: ""
-        "400":
+                $ref: '#/components/schemas/Admin'
+          description: ''
+        '400':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Message"
-          description: ""
+                $ref: '#/components/schemas/Message'
+          description: ''
   /api/users/admin/login/:
     post:
       operationId: api_users_admin_login_create
       description: Admin User loging and return refresh and access token
       tags:
-        - Admin User
+      - Admin User
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/AdminRequest"
+              $ref: '#/components/schemas/AdminRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: "#/components/schemas/AdminRequest"
+              $ref: '#/components/schemas/AdminRequest'
           multipart/form-data:
             schema:
-              $ref: "#/components/schemas/AdminRequest"
+              $ref: '#/components/schemas/AdminRequest'
         required: true
       security:
-        - jwtAuth: []
-        - cookieAuth: []
-        - basicAuth: []
-        - Bearer: []
-        - {}
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - Bearer: []
+      - {}
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Token"
-          description: ""
-        "400":
+                $ref: '#/components/schemas/Token'
+          description: ''
+        '400':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Message"
-          description: ""
+                $ref: '#/components/schemas/Message'
+          description: ''
   /api/users/admin/logout/:
     post:
       operationId: api_users_admin_logout_create
       description: Logout admin user
       tags:
-        - Admin User
+      - Admin User
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/MessageRequest"
+              $ref: '#/components/schemas/MessageRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: "#/components/schemas/MessageRequest"
+              $ref: '#/components/schemas/MessageRequest'
           multipart/form-data:
             schema:
-              $ref: "#/components/schemas/MessageRequest"
+              $ref: '#/components/schemas/MessageRequest'
         required: true
       security:
-        - jwtAuth: []
-        - cookieAuth: []
-        - basicAuth: []
-        - Bearer: []
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - Bearer: []
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Message"
-          description: ""
+                $ref: '#/components/schemas/Message'
+          description: ''
   /api/users/confirm-email/{user_id}/:
     get:
       operationId: api_users_confirm_email_retrieve
       description: Handle email confirmation process
       parameters:
-        - in: path
-          name: user_id
-          schema:
-            type: integer
-          required: true
+      - in: path
+        name: user_id
+        schema:
+          type: integer
+        required: true
       tags:
-        - User
+      - User
       security:
-        - jwtAuth: []
-        - cookieAuth: []
-        - basicAuth: []
-        - Bearer: []
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - Bearer: []
       responses:
-        "200":
+        '200':
           description: Email confirmed, you can now log in.
-        "404":
+        '404':
           description: Invalid Confirmation Link.
   /api/users/login/:
     post:
       operationId: api_users_login_create
       description: Authenticate a user and return a CSRF token
       tags:
-        - User
+      - User
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CustomUserRequest"
+              $ref: '#/components/schemas/CustomUserRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: "#/components/schemas/CustomUserRequest"
+              $ref: '#/components/schemas/CustomUserRequest'
           multipart/form-data:
             schema:
-              $ref: "#/components/schemas/CustomUserRequest"
+              $ref: '#/components/schemas/CustomUserRequest'
         required: true
       security:
-        - jwtAuth: []
-        - cookieAuth: []
-        - basicAuth: []
-        - Bearer: []
-        - {}
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - Bearer: []
+      - {}
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Token"
+                $ref: '#/components/schemas/Token'
               examples:
                 SuccessfulLogin:
                   value:
@@ -555,62 +595,61 @@ paths:
                     csrf_token: csrf-token-value
                   summary: A successful login example
                   description: Example of a successful login response
-          description: ""
-        "400":
+          description: ''
+        '400':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Message"
+                $ref: '#/components/schemas/Message'
               examples:
                 InvalidCredentials:
                   value:
                     error: Invalid Credentials
                   summary: An unsuccessful login example
-                  description:
-                    Example of an unsuccessful login response due to invalid
+                  description: Example of an unsuccessful login response due to invalid
                     credentials
-          description: ""
+          description: ''
   /api/users/logout/:
     post:
       operationId: api_users_logout_create
       description: Log out the authenticated user
       tags:
-        - User
+      - User
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/MessageRequest"
+              $ref: '#/components/schemas/MessageRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: "#/components/schemas/MessageRequest"
+              $ref: '#/components/schemas/MessageRequest'
           multipart/form-data:
             schema:
-              $ref: "#/components/schemas/MessageRequest"
+              $ref: '#/components/schemas/MessageRequest'
         required: true
       security:
-        - jwtAuth: []
-        - cookieAuth: []
-        - basicAuth: []
-        - Bearer: []
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - Bearer: []
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Message"
-          description: ""
+                $ref: '#/components/schemas/Message'
+          description: ''
   /api/users/register/:
     post:
       operationId: api_users_register_create
       description: Register a new user
       tags:
-        - User
+      - User
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CustomUserRequest"
+              $ref: '#/components/schemas/CustomUserRequest'
             examples:
               RegularUser:
                 value:
@@ -622,7 +661,7 @@ paths:
                 description: Example payload for registering a regular user
           application/x-www-form-urlencoded:
             schema:
-              $ref: "#/components/schemas/CustomUserRequest"
+              $ref: '#/components/schemas/CustomUserRequest'
             examples:
               RegularUser:
                 value:
@@ -634,7 +673,7 @@ paths:
                 description: Example payload for registering a regular user
           multipart/form-data:
             schema:
-              $ref: "#/components/schemas/CustomUserRequest"
+              $ref: '#/components/schemas/CustomUserRequest'
             examples:
               RegularUser:
                 value:
@@ -646,17 +685,17 @@ paths:
                 description: Example payload for registering a regular user
         required: true
       security:
-        - jwtAuth: []
-        - cookieAuth: []
-        - basicAuth: []
-        - Bearer: []
-        - {}
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - Bearer: []
+      - {}
       responses:
-        "201":
+        '201':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CustomUser"
+                $ref: '#/components/schemas/CustomUser'
               examples:
                 UserResponseExample:
                   value:
@@ -667,45 +706,43 @@ paths:
                       username: newuser
                       is_active: false
                   summary: Example of a successful user registration response
-                  description:
-                    This example shows the response after a successful
+                  description: This example shows the response after a successful
                     user registration
-          description: ""
-        "400":
+          description: ''
+        '400':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Message"
+                $ref: '#/components/schemas/Message'
               examples:
                 ErrorResponseExample:
                   value:
                     email:
-                      - This field is required.
+                    - This field is required.
                     password:
-                      - This field is required.
+                    - This field is required.
                   summary: Example of a failed registration response
-                  description:
-                    This example shows the response after a failed registration
+                  description: This example shows the response after a failed registration
                     due to validation errors
-          description: ""
+          description: ''
   /api/users/user-profile/:
     get:
       operationId: retrieve_user_profile
       description: Retrieve the profile details of the authenticated user.
       summary: Retrieve User Profile
       tags:
-        - User
+      - User
       security:
-        - jwtAuth: []
-        - cookieAuth: []
-        - basicAuth: []
-        - Bearer: []
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - Bearer: []
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserProfile"
+                $ref: '#/components/schemas/UserProfile'
               examples:
                 SuccessfulResponse:
                   value:
@@ -714,48 +751,47 @@ paths:
                     last_name: Doe
                     email: johndoe@example.com
                   summary: Successful Response
-          description: ""
-    # put:
-    #   operationId: api_users_user_profile_update
-    #   tags:
-    #   - api
-    #   requestBody:
-    #     content:
-    #       application/json:
-    #         schema:
-    #           $ref: '#/components/schemas/UserProfileRequest'
-    #       application/x-www-form-urlencoded:
-    #         schema:
-    #           $ref: '#/components/schemas/UserProfileRequest'
-    #       multipart/form-data:
-    #         schema:
-    #           $ref: '#/components/schemas/UserProfileRequest'
-    #     required: true
-    #   security:
-    #   - jwtAuth: []
-    #   - cookieAuth: []
-    #   - basicAuth: []
-    #   - Bearer: []
-    #   responses:
-    #     '200':
-    #       content:
-    #         application/json:
-    #           schema:
-    #             $ref: '#/components/schemas/UserProfile'
-    #       description: ''
-    patch:
-      operationId: update_user_profile
-      description:
-        Update the profile details of the authenticated user. The email
-        field is excluded from being updated.
-      summary: Update User Profile
+          description: ''
+    put:
+      operationId: api_users_user_profile_update
       tags:
-        - User
+      - api
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/PatchedUserProfileRequest"
+              $ref: '#/components/schemas/UserProfileRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserProfileRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserProfileRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - Bearer: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+          description: ''
+    patch:
+      operationId: update_user_profile
+      description: Update the profile details of the authenticated user. The email
+        field is excluded from being updated.
+      summary: Update User Profile
+      tags:
+      - User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUserProfileRequest'
             examples:
               UpdateRequest:
                 value:
@@ -764,21 +800,21 @@ paths:
                 summary: Update Request
           application/x-www-form-urlencoded:
             schema:
-              $ref: "#/components/schemas/PatchedUserProfileRequest"
+              $ref: '#/components/schemas/PatchedUserProfileRequest'
           multipart/form-data:
             schema:
-              $ref: "#/components/schemas/PatchedUserProfileRequest"
+              $ref: '#/components/schemas/PatchedUserProfileRequest'
       security:
-        - jwtAuth: []
-        - cookieAuth: []
-        - basicAuth: []
-        - Bearer: []
+      - jwtAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - Bearer: []
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserProfile"
+                $ref: '#/components/schemas/UserProfile'
               examples:
                 SuccessfulResponse:
                   value:
@@ -787,7 +823,7 @@ paths:
                     last_name: Doe
                     email: johndoe@example.com
                   summary: Successful Response
-          description: ""
+          description: ''
 components:
   schemas:
     Admin:
@@ -809,11 +845,15 @@ components:
           items:
             type: string
           readOnly: true
+        is_government_authority:
+          type: boolean
+          readOnly: true
       required:
-        - email
-        - events_joined
-        - first_name
-        - last_name
+      - email
+      - events_joined
+      - first_name
+      - is_government_authority
+      - last_name
     AdminRequest:
       type: object
       properties:
@@ -835,10 +875,10 @@ components:
           type: string
           maxLength: 150
       required:
-        - email
-        - first_name
-        - last_name
-        - password
+      - email
+      - first_name
+      - last_name
+      - password
     Category:
       type: object
       properties:
@@ -849,8 +889,8 @@ components:
           type: string
           maxLength: 100
       required:
-        - id
-        - name
+      - id
+      - name
     CategoryRequest:
       type: object
       properties:
@@ -859,7 +899,7 @@ components:
           minLength: 1
           maxLength: 100
       required:
-        - name
+      - name
     CustomUser:
       type: object
       properties:
@@ -879,11 +919,15 @@ components:
           items:
             type: string
           readOnly: true
+        is_government_authority:
+          type: boolean
+          readOnly: true
       required:
-        - email
-        - events_joined
-        - first_name
-        - last_name
+      - email
+      - events_joined
+      - first_name
+      - is_government_authority
+      - last_name
     CustomUserRequest:
       type: object
       properties:
@@ -905,17 +949,17 @@ components:
           type: string
           maxLength: 150
       required:
-        - email
-        - first_name
-        - last_name
-        - password
+      - email
+      - first_name
+      - last_name
+      - password
     Error:
       type: object
       properties:
         error:
           type: string
       required:
-        - error
+      - error
     Event:
       type: object
       properties:
@@ -960,23 +1004,23 @@ components:
           format: date-time
           readOnly: true
         status:
-          $ref: "#/components/schemas/StatusEnum"
+          $ref: '#/components/schemas/StatusEnum'
         category:
           type: integer
       required:
-        - capacity
-        - category
-        - category_name
-        - created_at
-        - description
-        - event_date
-        - event_hosts
-        - event_name
-        - id
-        - image_url
-        - location
-        - registration_deadline
-        - updated_at
+      - capacity
+      - category
+      - category_name
+      - created_at
+      - description
+      - event_date
+      - event_hosts
+      - event_name
+      - id
+      - image_url
+      - location
+      - registration_deadline
+      - updated_at
     EventDetail:
       type: object
       properties:
@@ -1015,26 +1059,26 @@ components:
           format: date-time
           readOnly: true
         status:
-          $ref: "#/components/schemas/StatusEnum"
+          $ref: '#/components/schemas/StatusEnum'
         category:
           type: integer
         participants:
           type: array
           items:
-            $ref: "#/components/schemas/Participant"
+            $ref: '#/components/schemas/Participant'
       required:
-        - capacity
-        - category
-        - created_at
-        - description
-        - event_date
-        - event_name
-        - id
-        - image_url
-        - location
-        - participants
-        - registration_deadline
-        - updated_at
+      - capacity
+      - category
+      - created_at
+      - description
+      - event_date
+      - event_name
+      - id
+      - image_url
+      - location
+      - participants
+      - registration_deadline
+      - updated_at
     EventRegistrationResponse:
       type: object
       properties:
@@ -1043,8 +1087,8 @@ components:
         total_participants:
           type: integer
       required:
-        - message
-        - total_participants
+      - message
+      - total_participants
     EventRequest:
       type: object
       properties:
@@ -1080,26 +1124,26 @@ components:
           maximum: 2147483647
           minimum: -2147483648
         status:
-          $ref: "#/components/schemas/StatusEnum"
+          $ref: '#/components/schemas/StatusEnum'
         category:
           type: integer
       required:
-        - capacity
-        - category
-        - description
-        - event_date
-        - event_hosts
-        - event_name
-        - image_url
-        - location
-        - registration_deadline
+      - capacity
+      - category
+      - description
+      - event_date
+      - event_hosts
+      - event_name
+      - image_url
+      - location
+      - registration_deadline
     Message:
       type: object
       properties:
         message:
           type: string
       required:
-        - message
+      - message
     MessageRequest:
       type: object
       properties:
@@ -1107,7 +1151,7 @@ components:
           type: string
           minLength: 1
       required:
-        - message
+      - message
     Participant:
       type: object
       properties:
@@ -1126,8 +1170,8 @@ components:
           type: string
           maxLength: 150
       required:
-        - email
-        - id
+      - email
+      - id
     PatchedUserProfileRequest:
       type: object
       properties:
@@ -1144,8 +1188,7 @@ components:
         is_active:
           type: boolean
           title: Active
-          description:
-            Designates whether this user should be treated as active. Unselect
+          description: Designates whether this user should be treated as active. Unselect
             this instead of deleting accounts.
         is_government_authority:
           type: boolean
@@ -1155,10 +1198,10 @@ components:
             type: integer
     StatusEnum:
       enum:
-        - UPCOMING
-        - ONGOING
-        - COMPLETED
-        - CANCELED
+      - UPCOMING
+      - ONGOING
+      - COMPLETED
+      - CANCELED
       type: string
       description: |-
         * `UPCOMING` - UPCOMING
@@ -1171,7 +1214,7 @@ components:
         csrf_token:
           type: string
       required:
-        - csrf_token
+      - csrf_token
     TokenRefresh:
       type: object
       properties:
@@ -1179,7 +1222,7 @@ components:
           type: string
           readOnly: true
       required:
-        - access
+      - access
     TokenRefreshRequest:
       type: object
       properties:
@@ -1188,7 +1231,7 @@ components:
           writeOnly: true
           minLength: 1
       required:
-        - refresh
+      - refresh
     UserProfile:
       type: object
       properties:
@@ -1209,8 +1252,7 @@ components:
         is_active:
           type: boolean
           title: Active
-          description:
-            Designates whether this user should be treated as active. Unselect
+          description: Designates whether this user should be treated as active. Unselect
             this instead of deleting accounts.
         date_joined:
           type: string
@@ -1223,9 +1265,9 @@ components:
           items:
             type: integer
       required:
-        - date_joined
-        - email
-        - password
+      - date_joined
+      - email
+      - password
     UserProfileRequest:
       type: object
       properties:
@@ -1242,8 +1284,7 @@ components:
         is_active:
           type: boolean
           title: Active
-          description:
-            Designates whether this user should be treated as active. Unselect
+          description: Designates whether this user should be treated as active. Unselect
             this instead of deleting accounts.
         is_government_authority:
           type: boolean
@@ -1252,7 +1293,7 @@ components:
           items:
             type: integer
       required:
-        - password
+      - password
   securitySchemes:
     basicAuth:
       type: http
@@ -1266,5 +1307,5 @@ components:
       scheme: bearer
       bearerFormat: JWT
 servers:
-  - url: http://127.0.0.1:8000
-    description: Local server
+- url: http://127.0.0.1:8000
+  description: Local server
