@@ -8,7 +8,8 @@ from drf_spectacular.utils import extend_schema, OpenApiRequest
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from .openapi_examples import admin_user_example, admin2_user_example
-from .permission import IsGovernmentAuthority
+from .permission import IsGovernmentAuthority, HasApiKey
+from django.contrib.auth.models import Group
 
 
 @extend_schema(
@@ -20,25 +21,21 @@ from .permission import IsGovernmentAuthority
     },
     description="Created an Admin Account.",
 )
-class BaseAdminCreateView(generics.CreateAPIView):
+class CreateAdminView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = AdminSerializer
+    permission_classes = [HasApiKey]
 
     def perform_create(self, serializer):
-        serializer.save(is_government_authority=True)
+        user = serializer.save()
+        # Directly assign the user to the Government Authority group
+        self.add_user_to_group(user)
 
-
-@extend_schema(
-    tags=["Admin User"],
-    request=OpenApiRequest(AdminSerializer, examples=[admin2_user_example]),
-    responses={
-        201: AdminSerializer,
-        400: MessageSerializer,
-    },
-    description="Created an Admin Account.",
-)
-class CreateAdminView(BaseAdminCreateView):
-    permission_classes = [IsAuthenticated, IsGovernmentAuthority]
+    def add_user_to_group(self, user):
+        # Since is_government_authority is always True for AdminSerializer
+        government_group = Group.objects.get(name="Government Authority")
+        user.groups.add(government_group)
+        print(f"Added {user.email} to Government Authority group.")
 
 
 @extend_schema(

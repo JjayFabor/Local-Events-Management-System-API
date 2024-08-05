@@ -2,6 +2,7 @@ from django.utils.translation import gettext_lazy as _
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from .manager import CustomUserManger
+import secrets
 
 
 class CustomUser(AbstractUser):
@@ -24,3 +25,16 @@ class CustomUser(AbstractUser):
     @property
     def is_resident(self):
         return not self.is_government_authority and not self.is_superuser
+
+
+class ApiKey(models.Model):
+    key = models.CharField(max_length=64, unique=True)
+    is_active = models.BooleanField(default=True)
+
+    def generate_key():
+        return secrets.token_urlsafe(32)
+
+    @classmethod
+    def create_key(cls):
+        key = cls.generate_key()
+        return cls.objects.create(key=key)
