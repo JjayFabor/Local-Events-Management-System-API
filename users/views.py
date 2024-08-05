@@ -203,13 +203,9 @@ class UserProfileView(generics.UpdateAPIView):
         return self.request.user
 
     def get(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            user = request.user
-            serializer = CustomUserSerializer(user)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(
-            {"error": "User is not authenticated"}, status=status.HTTP_400_BAD_REQUEST
-        )
+        user = request.user
+        serializer = self.get_serializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def update(self, request, *args, **kwargs):
         user = self.get_object()
