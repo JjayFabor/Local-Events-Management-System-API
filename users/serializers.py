@@ -47,6 +47,25 @@ class AdminSerializer(BaseUserSerializer):
         return self._create_user(validated_data, is_staff=True, is_superuser=True)
 
 
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = [
+            "email",
+            "password",
+            "first_name",
+            "last_name",
+            "is_active",
+            "date_joined",
+            "is_government_authority",
+            "events_joined",
+        ]
+        extra_kwargs = {
+            "email": {"read_only": True},
+            "date_joined": {"read_only": True},
+        }
+
+
 class MessageSerializer(serializers.Serializer):
     message = serializers.CharField()
 

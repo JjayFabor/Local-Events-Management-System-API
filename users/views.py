@@ -10,7 +10,6 @@ from django.shortcuts import render
 from django.db import transaction
 from drf_spectacular.utils import (
     extend_schema,
-    OpenApiExample,
     OpenApiRequest,
     OpenApiResponse,
 )
@@ -193,3 +192,32 @@ class UserLogoutView(generics.GenericAPIView):
             {"message": "Logout Successful"},
             status=status.HTTP_200_OK,
         )
+
+
+class UserProfileView(generics.UpdateAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = UserProfileSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            user = request.user
+            serializer = CustomUserSerializer(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(
+            {"error": "User is not authenticated"}, status=status.HTTP_400_BAD_REQUEST
+        )
+
+    def update(self, request, *args, **kwargs):
+        user = self.get_object()
+
+        data = request.data.copy()
+        data.pop("email", None)
+
+        serializer = self.get_serializer(user, data=data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data, status=status.HTTP_200_OK)
