@@ -8,11 +8,11 @@ The API allows for managing local events, including user authentication, event c
 
  <!-- For detailed documentation on the API, please visit: [**_Local Events Management System API Documentation_**](/API_DOCUMENTATION.md) -->
 
-## **Project Roadmap**
+<!-- ## **Project Roadmap**
 
 ### Week 1: Django and Rest Framework Basics
 
-<!-- ### Week 2: Advanced DRF Features
+### Week 2: Advanced DRF Features
 
 ### Week 3: Project Development and Deployment -->
 
