@@ -23,8 +23,8 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.ERROR(f"Permession {perm} does not exist"))
 
         # Assign permissions to Governement Authority group
-        governement_group, created = Group.objects.get_or_create(
-            name="Governement Authority"
+        government_group, created = Group.objects.get_or_create(
+            name="Government Authority"
         )
         gov_perms = [
             "add_event",
@@ -42,10 +42,10 @@ class Command(BaseCommand):
         for perm in gov_perms:
             try:
                 permission = Permission.objects.get(codename=perm)
-                governement_group.permissions.add(permission)
+                government_group.permissions.add(permission)
                 self.stdout.write(
                     self.style.SUCCESS(
-                        f"Successfully added {perm} permission to Governement Authority group"
+                        f"Successfully added {perm} permission to Government Authority group"
                     )
                 )
             except Permission.DoesNotExist:
