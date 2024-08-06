@@ -19,6 +19,14 @@ class CustomUser(AbstractUser):
 
     objects = CustomUserManger()
 
+    class Meta:
+        permissions = [
+            ("view_user", "Can view user"),
+            ("change_user", "Can change user"),
+            ("delete_user", "Can delete user"),
+            ("add_user", "Can add user"),
+        ]
+
     def __str__(self):
         return self.email
 

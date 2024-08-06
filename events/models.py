@@ -31,7 +31,15 @@ class EventModel(models.Model):
     capacity = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    status = models.CharField(choices=STATUS_CHOICES, default=UPCOMING)
+    status = models.CharField(max_length=12, choices=STATUS_CHOICES, default=UPCOMING)
+
+    class Meta:
+        permissions = [
+            ("view_event", "Can view event"),
+            ("change_event", "Can change event"),
+            ("delete_event", "Can delete event"),
+            ("add_event", "Can add event"),
+        ]
 
     def __str__(self):
         return self.event_name
